@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using StarrySkies.Data.Data;
+using StarrySkies.Data.Repositories.LocationRepo;
+using StarrySkies.Services.Services.Locations;
 
 namespace StarrySkies.API
 {
@@ -28,6 +32,12 @@ namespace StarrySkies.API
         {
 
             services.AddControllers();
+
+            var connectionString = Configuration["connectionStrings:dragonQuestSkies"];
+            services.AddDbContext<ApplicationDbContext>(c => c.UseSqlServer(connectionString));
+
+            services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<ILocationService, LocationService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StarrySkies.API", Version = "v1" });
