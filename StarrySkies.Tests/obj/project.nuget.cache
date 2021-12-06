@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ALOP2/WFwEpze8C6gAlmoZHlp5/4iGWrOTWDdFpFV0HMqXgraMWzBJQPPIzhM2eNIxZaU+tQH/Vh46pFeRZT4w==",
+  "dgSpecHash": "E8bAujFOqNDZa8rZS4W9hFwARR8GiLqk5Dbd2yYVFjvvkN/n2eTlDN7O5x2R1NaEZywLbGSP+hcoeZDTJpX1Ww==",
   "success": true,
-  "projectFilePath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\STarrySkies.Tests\\StarrySkies.Tests.csproj",
+  "projectFilePath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Tests\\StarrySkies.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\micha\\.nuget\\packages\\coverlet.collector\\1.3.0\\coverlet.collector.1.3.0.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\microsoft.codecoverage\\16.7.1\\microsoft.codecoverage.16.7.1.nupkg.sha512",

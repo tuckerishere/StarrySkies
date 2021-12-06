@@ -2,60 +2,72 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using StarrySkies.Data.Models;
 using StarrySkies.Data.Repositories.LocationRepo;
+using StarrySkies.Services.DTOs;
 
 namespace StarrySkies.Services.Services.Locations
 {
     public class LocationService : ILocationService
     {
         private readonly ILocationRepository _locationRepo;
-        public LocationService(ILocationRepository locationrepo)
+        private readonly IMapper _mapper;
+        public LocationService(ILocationRepository locationrepo, IMapper mapper)
         {
             _locationRepo = locationrepo;
+            _mapper = mapper;
         }
-        public Location CreateLocation(Location location)
+        public LocationResponseDto CreateLocation(CreateLocationDto location)
         {
-            Location createdLocation = new Location();
-            if (location.Name != null)
+            Location createdLocation = _mapper.Map<CreateLocationDto, Location>(location);
+            if (createdLocation.Name != null)
             {
-                createdLocation = location;
-                _locationRepo.CreateLocation(location);
-                _locationRepo.SaveChanges();
-            }
-            return location;
-        }
-
-        public Location DeleteLocation(Location location)
-        {
-            Location deletedLocation = new Location();
-            if (location != null)
-            {
-                deletedLocation = location;
-                _locationRepo.DeleteLocation(location);
+                _locationRepo.CreateLocation(createdLocation);
                 _locationRepo.SaveChanges();
             }
 
-            return deletedLocation;
+            LocationResponseDto locationToReturn = _mapper.Map<Location, LocationResponseDto>(createdLocation);
+            return locationToReturn;
         }
 
-        public ICollection<Location> GetAllLocations()
+        public LocationResponseDto DeleteLocation(RequestLocationDto location)
         {
-            return _locationRepo.GetAllLocations();
+            Location deletedLocation = _mapper.Map<RequestLocationDto, Location>(location);
+            Location locationExists = _locationRepo.GetLocationById(deletedLocation.Id);
+
+            if (location != null && locationExists != null)
+            {
+                _locationRepo.DeleteLocation(deletedLocation);
+                _locationRepo.SaveChanges();
+            }
+
+            LocationResponseDto locationToReturn = _mapper.Map<Location, LocationResponseDto>(deletedLocation);
+            return locationToReturn;
         }
 
-        public Location GetLocation(int id)
+        public ICollection<LocationResponseDto> GetAllLocations()
         {
-            var location = _locationRepo.GetLocationById(id);
-            return location;
+            ICollection<Location> locations = _locationRepo.GetAllLocations();
+            ICollection<LocationResponseDto> locationsToReturn = _mapper.Map<ICollection<Location>, ICollection<LocationResponseDto>>(locations);
+
+            return locationsToReturn;
         }
 
-        public Location UpdateLocation(int id, Location location)
+        public LocationResponseDto GetLocation(int id)
         {
-            
-            _locationRepo.UpdateLocation(location);
+            Location location = _locationRepo.GetLocationById(id);
+            LocationResponseDto locationToReturn = _mapper.Map<Location, LocationResponseDto>(location);
+            return locationToReturn;
+        }
+
+        public LocationResponseDto UpdateLocation(int id, CreateLocationDto location)
+        {
+            Location locationToUpdate = _mapper.Map<CreateLocationDto, Location>(location);
+            _locationRepo.UpdateLocation(locationToUpdate);
             _locationRepo.SaveChanges();
-            return location;
+            LocationResponseDto locationToReturn = _mapper.Map<Location, LocationResponseDto>(locationToUpdate);
+            return locationToReturn;
         }
     }
 }

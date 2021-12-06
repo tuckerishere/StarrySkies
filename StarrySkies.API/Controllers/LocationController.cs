@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using StarrySkies.Data.Models;
+using StarrySkies.Services.DTOs;
 using StarrySkies.Services.Services.Locations;
 
 namespace StarrySkies.API.Controllers
@@ -13,33 +15,34 @@ namespace StarrySkies.API.Controllers
     public class LocationController : ControllerBase
     {
         private readonly ILocationService _locationService;
-        public LocationController(ILocationService locationService)
+        private readonly IMapper _mapper;
+        public LocationController(ILocationService locationService, IMapper mapper)
         {
             _locationService = locationService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<List<Location>> GetAllLocations()
+        public ActionResult<List<LocationResponseDto>> GetAllLocations()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            List<Location> allLocations = new List<Location>();
-            allLocations = _locationService.GetAllLocations().ToList();
+            List<LocationResponseDto> allLocations = _locationService.GetAllLocations().ToList();
 
             return Ok(allLocations);
         }
 
         [HttpGet("{id}", Name = "GetLocation")]
-        public ActionResult<Location> GetLocation(int id)
+        public ActionResult<LocationResponseDto> GetLocation(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var location = _locationService.GetLocation(id);
+            LocationResponseDto location = _locationService.GetLocation(id);
 
             if (location == null)
             {
@@ -50,14 +53,14 @@ namespace StarrySkies.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateLocation([FromBody] Location location)
+        public ActionResult CreateLocation([FromBody] CreateLocationDto location)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var createdLocation = _locationService.CreateLocation(location);
+            LocationResponseDto createdLocation = _locationService.CreateLocation(location);
 
             return CreatedAtAction(nameof(GetLocation), new { id = createdLocation.Id }, createdLocation);
         }

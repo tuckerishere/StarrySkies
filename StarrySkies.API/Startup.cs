@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,8 @@ namespace StarrySkies.API
 
             services.AddScoped<ILocationRepository, LocationRepository>();
             services.AddScoped<ILocationService, LocationService>();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StarrySkies.API", Version = "v1" });

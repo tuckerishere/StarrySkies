@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace StarrySkies.Services.DTOs
 {
-    public class LocationDto
+    public class RequestLocationDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }
