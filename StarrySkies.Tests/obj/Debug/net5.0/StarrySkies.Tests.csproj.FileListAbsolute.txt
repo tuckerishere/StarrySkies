@@ -145,3 +145,8 @@ C:\Users\micha\source\repos\StarrySkies\STarrySkies.Tests\obj\Debug\net5.0\Starr
 C:\Users\micha\source\repos\StarrySkies\STarrySkies.Tests\obj\Debug\net5.0\ref\StarrySkies.Tests.dll
 C:\Users\micha\source\repos\StarrySkies\STarrySkies.Tests\obj\Debug\net5.0\StarrySkies.Tests.pdb
 C:\Users\micha\source\repos\StarrySkies\STarrySkies.Tests\obj\Debug\net5.0\StarrySkies.Tests.genruntimeconfig.cache
+C:\Users\micha\source\repos\StarrySkies\StarrySkies.Tests\bin\Debug\net5.0\AutoMapper.dll
+C:\Users\micha\source\repos\StarrySkies\StarrySkies.Tests\bin\Debug\net5.0\Castle.Core.dll
+C:\Users\micha\source\repos\StarrySkies\StarrySkies.Tests\bin\Debug\net5.0\Moq.dll
+C:\Users\micha\source\repos\StarrySkies\StarrySkies.Tests\bin\Debug\net5.0\StarrySkies.Services.dll
+C:\Users\micha\source\repos\StarrySkies\StarrySkies.Tests\bin\Debug\net5.0\StarrySkies.Services.pdb
