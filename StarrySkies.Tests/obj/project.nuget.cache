@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "YOtwekRWHHLvu+nPSQ4Xz6NbfArWiIBN7jGWxBIaCARpCDSBjnLITL6Q325wrDUXs95UhQARWo2tS4m+wr9ZIg==",
+  "dgSpecHash": "vT6vJcLHKfnOwT7MO63u3jGFC5Uqis3YmEYU3pZ7K1jbBg4vuDjDmvJY8RGyLj6doR1iR9/MP/bTbqiXF6PHYA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Tests\\StarrySkies.Tests.csproj",
+  "projectFilePath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySKies.Tests\\StarrySkies.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\micha\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\castle.core\\4.4.0\\castle.core.4.4.0.nupkg.sha512",

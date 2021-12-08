@@ -12,7 +12,7 @@ namespace StarrySkies.Services.Services.Locations
         ICollection<LocationResponseDto> GetAllLocations();
         LocationResponseDto GetLocation(int id);
         LocationResponseDto CreateLocation(CreateLocationDto location);
-        LocationResponseDto DeleteLocation(RequestLocationDto location);
+        LocationResponseDto DeleteLocation(int id);
         LocationResponseDto UpdateLocation(int id, CreateLocationDto location);
     }
 }

@@ -53,17 +53,45 @@ namespace StarrySkies.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateLocation([FromBody] CreateLocationDto location)
+        public ActionResult<LocationResponseDto> CreateLocation([FromBody] CreateLocationDto location)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             LocationResponseDto createdLocation = _locationService.CreateLocation(location);
 
+            if (createdLocation.Name == null)
+            {
+                return BadRequest("Please enter name.");
+            }
+
             return CreatedAtAction(nameof(GetLocation), new { id = createdLocation.Id }, createdLocation);
         }
+        [HttpDelete]
+        public ActionResult<LocationResponseDto> DeleteLocation(int id)
+        {
+            LocationResponseDto locationToDelete = _locationService.DeleteLocation(id);
+            if (locationToDelete.Id == 0)
+            {
+                return NotFound();
+            }
 
+            return Ok(locationToDelete);
+        }
+        [HttpPut("{id}")]
+        public ActionResult<LocationResponseDto> UpdateLocation(int id, [FromBody] CreateLocationDto locationToUpdate)
+        {
+            LocationResponseDto updatedLocation = new LocationResponseDto();
+
+            updatedLocation = _locationService.UpdateLocation(id, locationToUpdate);
+            if (updatedLocation.Id == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedLocation);
+        }
     }
 }

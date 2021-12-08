@@ -160,5 +160,132 @@ namespace StarrySkies.Tests.Service.Tests
             //Arrange
             locationRepo.Verify(l => l.CreateLocation(It.IsAny<Location>()), Times.Never);
         }
+
+        [Fact]
+        public void DeleteLocationServiceTest()
+        {
+            //Assert
+            var locationRepo = new Mock<ILocationRepository>();
+            Location location = new Location();
+            location.Id = 1;
+            location.Name = "Test";
+            location.Description = "Testeroni";
+
+            locationRepo.Setup(x => x.GetLocationById(location.Id)).Returns(location);
+            locationRepo.Setup(x => x.DeleteLocation(location));
+            locationRepo.Setup(x => x.SaveChanges());
+
+            var locationService = new LocationService(locationRepo.Object, _mapper);
+
+            //Act
+            var results = locationService.DeleteLocation(location.Id);
+
+            //Assert
+            Assert.Equal(1, results.Id);
+            Assert.Equal("Test", results.Name);
+            locationRepo.Verify(l => l.DeleteLocation(It.IsAny<Location>()), Times.Once);
+        }
+
+        [Fact]
+        public void DeleteLocationNotFound()
+        {
+            //Assert
+            var locationRepo = new Mock<ILocationRepository>();
+            Location location = new Location();
+            location.Id = 0;
+            location.Name = null;
+            location.Description = null;
+
+            locationRepo.Setup(x => x.GetLocationById(2)).Returns(location);
+
+            var locationService = new LocationService(locationRepo.Object, _mapper);
+
+            //Act
+            var results = locationService.DeleteLocation(2);
+
+            //Assert
+            Assert.Equal(0, results.Id);
+            Assert.Null(results.Name);
+            locationRepo.Verify(l => l.DeleteLocation(It.IsAny<Location>()), Times.Never);
+        }
+
+        [Fact]
+        public void UpdateLocationServiceTest()
+        {
+            //Assert
+            var locationRepo = new Mock<ILocationRepository>();
+            Location location = new Location();
+            location.Id = 1;
+            location.Name = "Hogwarts";
+            location.Description = "Castle";
+
+            CreateLocationDto updatedLocation = new CreateLocationDto();
+            updatedLocation.Name = "Bat Cave";
+            updatedLocation.Description = "Secret";
+
+            locationRepo.Setup(x => x.GetLocationById(location.Id)).Returns(location);
+
+            var locationService = new LocationService(locationRepo.Object, _mapper);
+
+            //Act
+            var results = locationService.UpdateLocation(1, updatedLocation);
+
+            //Assert
+            Assert.Equal(1, results.Id);
+            Assert.Equal("Bat Cave", results.Name);
+            Assert.Equal("Secret", results.Description);
+            locationRepo.Verify(x => x.UpdateLocation(It.IsAny<Location>()), Times.Once);
+        }
+
+        [Fact]
+        public void UpdateLocationNotFoundTest()
+        {
+            var locationRepo = new Mock<ILocationRepository>();
+            Location location = new Location();
+            location.Id = 1;
+            location.Name = "Hogwarts";
+            location.Description = "Castle";
+
+            CreateLocationDto updatedLocation = new CreateLocationDto();
+            location.Name = "Bat Cave";
+
+            locationRepo.Setup(x => x.GetLocationById(1)).Returns(location);
+
+            var locationService = new LocationService(locationRepo.Object, _mapper);
+
+            //Act
+            var results = locationService.UpdateLocation(2, updatedLocation);
+
+            //Assert
+            Assert.Equal(0, results.Id);
+            Assert.Null(results.Name);
+            locationRepo.Verify(x => x.UpdateLocation(It.IsAny<Location>()), Times.Never);
+        }
+
+        [Fact]
+        public void UpdatedLocationNameNullTest()
+        {
+            //Arrange
+            var locationRepo = new Mock<ILocationRepository>();
+            Location location = new Location();
+            location.Id = 1;
+            location.Name = "Hogwarts";
+            location.Description = "Castle";
+
+            CreateLocationDto updatedLocation = new CreateLocationDto();
+            updatedLocation.Name = null;
+
+            locationRepo.Setup(x => x.GetLocationById(1)).Returns(location);
+
+            var locationService = new LocationService(locationRepo.Object, _mapper);
+
+            //Act
+            var results = locationService.UpdateLocation(1, updatedLocation);
+
+            //Assert
+            Assert.Equal(0, results.Id);
+            Assert.Null(results.Name);
+            locationRepo.Verify(x => x.UpdateLocation(It.IsAny<Location>()), Times.Never);
+        }
     }
 }
