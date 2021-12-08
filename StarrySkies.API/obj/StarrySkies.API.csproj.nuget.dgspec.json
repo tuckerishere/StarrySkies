@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.API.csproj": {}
+    "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.API.csproj": {
+    "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.API.csproj",
+        "projectUniqueName": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj",
         "projectName": "StarrySkies.API",
-        "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.API.csproj",
+        "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj",
         "packagesPath": "C:\\Users\\micha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\obj\\",
+        "outputPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\micha\\AppData\\Roaming\\NuGet\\NuGet.Config"

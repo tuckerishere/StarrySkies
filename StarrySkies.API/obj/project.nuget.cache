@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "efrKUx+eHLxxGDHqAoZ7XHH2jzsLDvE4Oj8DpCklbXFb5FmTLsWr1O4CXbEtjL2ebCjL7Fed4FPl40rVWzT/rw==",
+  "dgSpecHash": "c19aPq7yOmUaYDbGNifbg9FQjAQ2n+LrnZ4TTiyY9XNehCCVi7rEOTcpIY+8BGl65W9+6uYGnHfZtawoLGtwHw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.API.csproj",
+  "projectFilePath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\micha\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\micha\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

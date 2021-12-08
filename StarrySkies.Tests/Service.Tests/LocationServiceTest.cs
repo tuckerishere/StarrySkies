@@ -77,6 +77,27 @@ namespace StarrySkies.Tests.Service.Tests
             Assert.Equal("Home", results.Name);
             Assert.Equal("Comfy", results.Description);
         }
+        [Fact]
+        public void GetLocationNullTest()
+        {
+            //Arrange
+            var locationRepo = new Mock<ILocationRepository>();
+            Location location = new Location();
+            location.Id = 1;
+            location.Name = "Home";
+            location.Description = "Comfy";
+
+            locationRepo.Setup(x => x.GetLocationById(location.Id)).Returns(location);
+            var locationService = new LocationService(locationRepo.Object, _mapper);
+
+            //Act
+            var results = locationService.GetLocation(2);
+
+            //Assert
+            Assert.Equal(0, results.Id);
+            Assert.Null(results.Name);
+            Assert.Null(results.Description);
+        }
 
         [Fact]
         public void LocationServiceGetAllLocationsTest()
@@ -108,12 +129,12 @@ namespace StarrySkies.Tests.Service.Tests
         }
 
         [Fact]
-        public void LocationServiceReturnsNullTest()
+        public void ReturnEmptyListGetAllLocations()
         {
             //Arrange
             var locationRepo = new Mock<ILocationRepository>();
-            ICollection<Location> locationCollection = new List<Location>();
-            locationRepo.Setup(x => x.GetAllLocations()).Returns(locationCollection);
+            ICollection<Location> locationList = new List<Location>();
+            locationRepo.Setup(x => x.GetAllLocations()).Returns(locationList);
 
             var locationService = new LocationService(locationRepo.Object, _mapper);
 
@@ -139,7 +160,8 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.GetLocation(1);
 
             //Assert
-            Assert.Null(results);
+            Assert.Null(results.Name);
+            Assert.Equal(0, results.Id);
         }
 
         [Fact]
