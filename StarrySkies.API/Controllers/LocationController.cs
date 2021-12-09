@@ -23,6 +23,9 @@ namespace StarrySkies.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public ActionResult<List<LocationResponseDto>> GetAllLocations()
         {
             if (!ModelState.IsValid)
@@ -35,6 +38,9 @@ namespace StarrySkies.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetLocation")]
+        [ProducesResponseType(200, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public ActionResult<LocationResponseDto> GetLocation(int id)
         {
             if (!ModelState.IsValid)
@@ -44,7 +50,7 @@ namespace StarrySkies.API.Controllers
 
             LocationResponseDto location = _locationService.GetLocation(id);
 
-            if (location == null)
+            if (location.Id == 0 || location == null)
             {
                 return NotFound();
             }
@@ -53,6 +59,9 @@ namespace StarrySkies.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public ActionResult<LocationResponseDto> CreateLocation([FromBody] CreateLocationDto location)
         {
             if (!ModelState.IsValid)
@@ -69,23 +78,36 @@ namespace StarrySkies.API.Controllers
 
             return CreatedAtAction(nameof(GetLocation), new { id = createdLocation.Id }, createdLocation);
         }
-        [HttpDelete]
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public ActionResult<LocationResponseDto> DeleteLocation(int id)
         {
             LocationResponseDto locationToDelete = _locationService.DeleteLocation(id);
-            if (locationToDelete.Id == 0)
+            if (locationToDelete == null || locationToDelete.Id == 0)
             {
                 return NotFound();
             }
 
             return Ok(locationToDelete);
         }
+
         [HttpPut("{id}")]
+        [ProducesResponseType(200, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public ActionResult<LocationResponseDto> UpdateLocation(int id, [FromBody] CreateLocationDto locationToUpdate)
         {
+            if (locationToUpdate.Name.Trim() == "")
+            {
+                return BadRequest("Please enter name.");
+            }
             LocationResponseDto updatedLocation = new LocationResponseDto();
 
             updatedLocation = _locationService.UpdateLocation(id, locationToUpdate);
+
             if (updatedLocation.Id == 0)
             {
                 return NotFound();

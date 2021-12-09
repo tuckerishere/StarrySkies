@@ -38,11 +38,14 @@ namespace StarrySkies.Services.Services.Locations
             LocationResponseDto locationToReturn = new LocationResponseDto();
             Location locationExists = _locationRepo.GetLocationById(id);
 
-            if (locationExists.Id != 0 && locationExists != null)
+            if (locationExists != null)
             {
-                _locationRepo.DeleteLocation(locationExists);
-                _locationRepo.SaveChanges();
-                locationToReturn = _mapper.Map<Location, LocationResponseDto>(locationExists);
+                if (locationExists.Id != 0)
+                {
+                    _locationRepo.DeleteLocation(locationExists);
+                    _locationRepo.SaveChanges();
+                    locationToReturn = _mapper.Map<Location, LocationResponseDto>(locationExists);
+                }
             }
 
             return locationToReturn;

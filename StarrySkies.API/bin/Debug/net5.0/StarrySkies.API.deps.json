@@ -23,7 +23,7 @@
   },
   "targets": {
     ".NETCoreApp,Version=v5.0": {
-      "StarrySkies.API/1.0.0": {
+      "StarrySkies.Api/1.0.0": {
         "dependencies": {
           "AutoMapper": "10.1.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.1",
@@ -318,10 +318,10 @@
           "WindowsBase": "4.0.0.0"
         },
         "runtime": {
-          "StarrySkies.API.dll": {}
+          "StarrySkies.Api.dll": {}
         },
         "compile": {
-          "StarrySkies.API.dll": {}
+          "StarrySkies.Api.dll": {}
         }
       },
       "AutoMapper/10.1.1": {
@@ -3039,7 +3039,7 @@
     }
   },
   "libraries": {
-    "StarrySkies.API/1.0.0": {
+    "StarrySkies.Api/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
