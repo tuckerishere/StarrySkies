@@ -100,10 +100,12 @@ namespace StarrySkies.API.Controllers
         [ProducesResponseType(404)]
         public ActionResult<LocationResponseDto> UpdateLocation(int id, [FromBody] CreateLocationDto locationToUpdate)
         {
-            if (locationToUpdate.Name.Trim() == "")
+
+            if (locationToUpdate.Name == null || locationToUpdate.Name.Trim() == "")
             {
                 return BadRequest("Please enter name.");
             }
+
             LocationResponseDto updatedLocation = new LocationResponseDto();
 
             updatedLocation = _locationService.UpdateLocation(id, locationToUpdate);
