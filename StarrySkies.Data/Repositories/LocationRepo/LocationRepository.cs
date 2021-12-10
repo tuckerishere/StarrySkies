@@ -17,7 +17,7 @@ namespace StarrySkies.Data.Repositories.LocationRepo
         }
         public void CreateLocation(Location location)
         {
-            _context.Locations.AddAsync(location);
+            _context.Locations.Add(location);
         }
 
         public void DeleteLocation(Location location)
