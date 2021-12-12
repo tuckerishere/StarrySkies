@@ -2616,7 +2616,7 @@
           "build/netcoreapp2.1/xunit.runner.visualstudio.props": {}
         }
       },
-      "StarrySkies.API/1.0.0": {
+      "StarrySkies.Api/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
@@ -2629,10 +2629,10 @@
           "Swashbuckle.AspNetCore": "5.6.3"
         },
         "compile": {
-          "bin/placeholder/StarrySkies.API.dll": {}
+          "bin/placeholder/StarrySkies.Api.dll": {}
         },
         "runtime": {
-          "bin/placeholder/StarrySkies.API.dll": {}
+          "bin/placeholder/StarrySkies.Api.dll": {}
         },
         "frameworkReferences": [
           "Microsoft.AspNetCore.App"
@@ -8531,10 +8531,10 @@
         "xunit.runner.visualstudio.nuspec"
       ]
     },
-    "StarrySkies.API/1.0.0": {
+    "StarrySkies.Api/1.0.0": {
       "type": "project",
-      "path": "../StarrySkies.API/StarrySkies.API.csproj",
-      "msbuildProject": "../StarrySkies.API/StarrySkies.API.csproj"
+      "path": "../StarrySkies.Api/StarrySkies.Api.csproj",
+      "msbuildProject": "../StarrySkies.Api/StarrySkies.Api.csproj"
     },
     "StarrySkies.Data/1.0.0": {
       "type": "project",
@@ -8552,7 +8552,7 @@
       "Microsoft.EntityFrameworkCore.InMemory >= 5.0.0",
       "Microsoft.NET.Test.Sdk >= 16.7.1",
       "Moq >= 4.16.1",
-      "StarrySkies.API >= 1.0.0",
+      "StarrySkies.Api >= 1.0.0",
       "StarrySkies.Data >= 1.0.0",
       "StarrySkies.Services >= 1.0.0",
       "coverlet.collector >= 1.3.0",
@@ -8585,8 +8585,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj": {
-              "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj"
+            "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.Api.csproj": {
+              "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.Api.csproj"
             },
             "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Data\\StarrySkies.Data.csproj": {
               "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Data\\StarrySkies.Data.csproj"

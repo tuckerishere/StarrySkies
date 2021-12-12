@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Tests\\StarrySkies.Tests.csproj": {}
+    "C:\\Users\\micha\\source\\repos\\StarrySkies\\STarrySkies.Tests\\StarrySkies.Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj": {
+    "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj",
-        "projectName": "StarrySkies.API",
-        "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj",
+        "projectUniqueName": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.Api.csproj",
+        "projectName": "StarrySkies.Api",
+        "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.Api.csproj",
         "packagesPath": "C:\\Users\\micha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\obj\\",
+        "outputPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\micha\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -236,14 +236,14 @@
         }
       }
     },
-    "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Tests\\StarrySkies.Tests.csproj": {
+    "C:\\Users\\micha\\source\\repos\\StarrySkies\\STarrySkies.Tests\\StarrySkies.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Tests\\StarrySkies.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\micha\\source\\repos\\StarrySkies\\STarrySkies.Tests\\StarrySkies.Tests.csproj",
         "projectName": "StarrySkies.Tests",
-        "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Tests\\StarrySkies.Tests.csproj",
+        "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\STarrySkies.Tests\\StarrySkies.Tests.csproj",
         "packagesPath": "C:\\Users\\micha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Tests\\obj\\",
+        "outputPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\STarrySkies.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\micha\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -258,8 +258,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj": {
-                "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.API\\StarrySkies.API.csproj"
+              "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.Api.csproj": {
+                "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Api\\StarrySkies.Api.csproj"
               },
               "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Data\\StarrySkies.Data.csproj": {
                 "projectPath": "C:\\Users\\micha\\source\\repos\\StarrySkies\\StarrySkies.Data\\StarrySkies.Data.csproj"

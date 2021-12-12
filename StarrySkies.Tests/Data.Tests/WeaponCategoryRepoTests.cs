@@ -16,7 +16,7 @@ namespace StarrySkies.Tests.Data.Tests
         {
             DbContextOptions<ApplicationDbContext> options;
             var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            builder.UseInMemoryDatabase(databaseName: "StarrySkies");
+            builder.UseInMemoryDatabase(databaseName: "WeaponCategories");
             options = builder.Options;
             ApplicationDbContext applicationDbContext = new ApplicationDbContext(options);
             applicationDbContext.Database.EnsureDeleted();
@@ -48,12 +48,16 @@ namespace StarrySkies.Tests.Data.Tests
         {
             //Arrange
             var weaponCategoryRepo = GetInMemoryWeaponCategoryRepository();
-            WeaponCategory weaponCategoryOne = new WeaponCategory();
-            weaponCategoryOne.Id = 1;
-            weaponCategoryOne.Name = "Sword";
-            WeaponCategory weaponCategoryTwo = new WeaponCategory();
-            weaponCategoryTwo.Id = 2;
-            weaponCategoryTwo.Name = "Axe";
+            WeaponCategory weaponCategoryOne = new WeaponCategory()
+            {
+                Id = 1,
+                Name = "Sword"
+            };
+            WeaponCategory weaponCategoryTwo = new WeaponCategory()
+            {
+                Id = 2,
+                Name = "Axe"
+            };
             weaponCategoryRepo.CreateWeaponCategory(weaponCategoryOne);
             weaponCategoryRepo.CreateWeaponCategory(weaponCategoryTwo);
             weaponCategoryRepo.SaveChanges();
@@ -66,7 +70,7 @@ namespace StarrySkies.Tests.Data.Tests
         }
 
         [Fact]
-        public void DeleteLocation()
+        public void DeleteWeaponCategory()
         {
             //Arrange
             var weaponCategoryRepo = GetInMemoryWeaponCategoryRepository();
@@ -85,6 +89,47 @@ namespace StarrySkies.Tests.Data.Tests
 
             //Assert
             Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetWeaponCategoryById()
+        {
+            var weaponCategoryRepo = GetInMemoryWeaponCategoryRepository();
+            WeaponCategory weaponCategory = new WeaponCategory();
+            weaponCategory.Id = 1;
+            weaponCategory.Name = "Lance";
+
+            weaponCategoryRepo.CreateWeaponCategory(weaponCategory);
+            weaponCategoryRepo.SaveChanges();
+
+            //Act
+            var result = weaponCategoryRepo.GetWeaponCategoryById(1);
+
+            //Arrange
+            Assert.Equal(1, result.Id);
+            Assert.Equal("Lance", result.Name);
+        }
+
+        [Fact]
+        public void UpdateWeaponCategory()
+        {
+            //Arrange
+            var weaponCategoryRepo = GetInMemoryWeaponCategoryRepository();
+            WeaponCategory weaponCategory = new WeaponCategory();
+            weaponCategory.Id = 1;
+            weaponCategory.Name = "Sword";
+
+            weaponCategoryRepo.CreateWeaponCategory(weaponCategory);
+            weaponCategoryRepo.SaveChanges();
+            var categoryToUpdate = weaponCategoryRepo.GetWeaponCategoryById(1);
+            categoryToUpdate.Name = "Axe";
+
+            //Act
+            weaponCategoryRepo.UpdateWeaponCategory(categoryToUpdate);
+            var result = weaponCategoryRepo.GetWeaponCategoryById(1);
+
+            //Arrange
+            Assert.Equal("Axe", result.Name);
         }
     }
 }
