@@ -58,12 +58,33 @@ namespace StarrySkies.Services.Services.WeaponCategories
 
         public WeaponCategoryResponseDto GetWeaponCategoryById(int id)
         {
-            throw new NotImplementedException();
+            WeaponCategoryResponseDto categoryResponse = new WeaponCategoryResponseDto();
+            WeaponCategory category = _weaponCategoryRepo.GetWeaponCategoryById(id);
+            if (category != null || category.Id != 0)
+            {
+                categoryResponse = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(category);
+            }
+
+            return categoryResponse;
         }
 
         public WeaponCategoryResponseDto UpdateWeaponCategory(int id, CreateWeaponCategoryDto weaponCategoryDto)
         {
-            throw new NotImplementedException();
+            WeaponCategoryResponseDto categoryResponse = new WeaponCategoryResponseDto();
+            WeaponCategory categoryToUpdate = _weaponCategoryRepo.GetWeaponCategoryById(id);
+            if (categoryToUpdate != null
+                && weaponCategoryDto.Name != null
+                && weaponCategoryDto.Name.Trim() != "")
+            {
+                categoryToUpdate.Name = weaponCategoryDto.Name;
+                _weaponCategoryRepo.UpdateWeaponCategory(categoryToUpdate);
+                _weaponCategoryRepo.SaveChanges();
+                categoryResponse = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(categoryToUpdate);
+
+            }
+
+            return categoryResponse;
+
         }
     }
 }

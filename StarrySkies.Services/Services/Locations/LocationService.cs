@@ -78,9 +78,8 @@ namespace StarrySkies.Services.Services.Locations
                 && location.Name != null
                 && location.Name.Trim() != "")
             {
-                Location updatedLocation = _mapper.Map<CreateLocationDto, Location>(location);
-                locationToUpdate.Name = updatedLocation.Name;
-                locationToUpdate.Description = updatedLocation.Description;
+                locationToUpdate.Name = location.Name;
+                locationToUpdate.Description = location.Description;
 
                 _locationRepo.UpdateLocation(locationToUpdate);
                 _locationRepo.SaveChanges();
