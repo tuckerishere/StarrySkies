@@ -23,7 +23,7 @@ namespace StarrySkies.Services.Services.WeaponCategories
         {
             WeaponCategoryResponseDto categoryResponseDto = new WeaponCategoryResponseDto();
             WeaponCategory categoryToCreate = _mapper.Map<CreateWeaponCategoryDto, WeaponCategory>(weaponCategory);
-            if (categoryToCreate.Name != null || categoryToCreate.Name.Trim() != "")
+            if (categoryToCreate.Name != null && categoryToCreate.Name.Trim() != "")
             {
                 _weaponCategoryRepo.CreateWeaponCategory(categoryToCreate);
                 _weaponCategoryRepo.SaveChanges();
@@ -37,7 +37,7 @@ namespace StarrySkies.Services.Services.WeaponCategories
         {
             WeaponCategoryResponseDto categoryResponseDto = new WeaponCategoryResponseDto();
             WeaponCategory categoryToDelete = _weaponCategoryRepo.GetWeaponCategoryById(id);
-            if (categoryToDelete != null || categoryToDelete.Id != 0)
+            if (categoryToDelete != null && categoryToDelete.Id != 0)
             {
                 _weaponCategoryRepo.DeleteWeaponCategory(categoryToDelete);
                 _weaponCategoryRepo.SaveChanges();
@@ -60,9 +60,12 @@ namespace StarrySkies.Services.Services.WeaponCategories
         {
             WeaponCategoryResponseDto categoryResponse = new WeaponCategoryResponseDto();
             WeaponCategory category = _weaponCategoryRepo.GetWeaponCategoryById(id);
-            if (category != null || category.Id != 0)
+            if (category != null)
             {
-                categoryResponse = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(category);
+                if (category.Id != 0)
+                {
+                    categoryResponse = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(category);
+                }
             }
 
             return categoryResponse;
