@@ -104,7 +104,7 @@ namespace StarrySkies.API.Controllers
         public ActionResult<WeaponCategoryResponseDto> UpdateWeaponCategory(int id, [FromBody]CreateWeaponCategoryDto updateWeaponCategory){
             if (updateWeaponCategory.Name == null || updateWeaponCategory.Name.Trim() == "")
             {
-                return BadRequest("Please enter name.");
+                return BadRequest("Please Weapon Category enter name.");
             }
 
             WeaponCategoryResponseDto updatedWeaponCategory = _categoryService.UpdateWeaponCategory(id, updateWeaponCategory);
