@@ -96,5 +96,25 @@ namespace StarrySkies.API.Controllers
 
             return CreatedAtAction(nameof(GetWeaponCategory), new { id = createdCategory.Id }, createdCategory);
         }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(200, Type=typeof(WeaponCategoryResponseDto))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public ActionResult<WeaponCategoryResponseDto> UpdateWeaponCategory(int id, [FromBody]CreateWeaponCategoryDto updateWeaponCategory){
+            if (updateWeaponCategory.Name == null || updateWeaponCategory.Name.Trim() == "")
+            {
+                return BadRequest("Please enter name.");
+            }
+
+            WeaponCategoryResponseDto updatedWeaponCategory = _categoryService.UpdateWeaponCategory(id, updateWeaponCategory);
+{}
+            if(updatedWeaponCategory.Id == 0 )
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedWeaponCategory);
+        }
     }
 }
