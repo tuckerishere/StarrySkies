@@ -15,11 +15,10 @@ namespace StarrySkies.API.Controllers
     public class LocationController : ControllerBase
     {
         private readonly ILocationService _locationService;
-        private readonly IMapper _mapper;
-        public LocationController(ILocationService locationService, IMapper mapper)
+
+        public LocationController(ILocationService locationService)
         {
             _locationService = locationService;
-            _mapper = mapper;
         }
 
         [HttpGet]
