@@ -17,21 +17,6 @@ namespace StarrySkies.Tests.Controllers.Tests
 {
     public class LocationControllerTest
     {
-        private readonly IMapper _mapper;
-        public LocationControllerTest()
-        {
-            if (_mapper == null)
-            {
-                var mappingConfig = new MapperConfiguration(mc =>
-                {
-                    mc.AddProfile(new DtoToModel());
-                    mc.AddProfile(new ModelToDto());
-                });
-                IMapper mapper = mappingConfig.CreateMapper();
-                _mapper = mapper;
-            }
-        }
-
         [Fact]
         public void GetAllLocationsControllerTest()
         {
@@ -51,7 +36,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.GetAllLocations()).Returns(locationList);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var results = locationController.GetAllLocations();
@@ -71,7 +56,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.GetAllLocations()).Returns(locationList);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initalReults = locationController.GetAllLocations();
@@ -93,7 +78,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.GetLocation(location.Id)).Returns(location);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResult = locationController.GetLocation(1);
@@ -114,7 +99,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.GetLocation(1)).Returns(location);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.GetLocation(1);
@@ -139,7 +124,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(locationResponse);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResult = locationController.CreateLocation(createdLocation);
@@ -166,7 +151,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(locationResponse);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResult = locationController.CreateLocation(createdLocation);
@@ -189,7 +174,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(locationResponse);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResult = locationController.CreateLocation(createdLocation);
@@ -211,7 +196,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.DeleteLocation(location.Id)).Returns(location);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResult = locationController.DeleteLocation(location.Id);
@@ -235,7 +220,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.DeleteLocation(location.Id)).Returns(location);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResult = locationController.DeleteLocation(location.Id);
@@ -253,7 +238,7 @@ namespace StarrySkies.Tests.Controllers.Tests
             var locationService = new Mock<ILocationService>();
             locationService.Setup(x => x.DeleteLocation(1)).Returns(new LocationResponseDto());
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.DeleteLocation(1);
@@ -283,7 +268,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(updatedResponse);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.UpdateLocation(1, updatedLocation);
@@ -306,7 +291,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.UpdateLocation(1, updatedLocation)).Returns(new LocationResponseDto());
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.UpdateLocation(1, updatedLocation);
@@ -335,7 +320,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(updatedResponse);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.UpdateLocation(1, updatedLocation);
@@ -364,7 +349,7 @@ namespace StarrySkies.Tests.Controllers.Tests
 
             locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(updatedResponse);
 
-            var locationController = new LocationController(locationService.Object, _mapper);
+            var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.UpdateLocation(1, updatedLocation);
