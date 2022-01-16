@@ -15,7 +15,7 @@ namespace StarrySkies.Tests.Data.Tests
         {
             DbContextOptions<ApplicationDbContext> options;
             var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            builder.UseInMemoryDatabase(databaseName: "StarrySkies");
+            builder.UseInMemoryDatabase(databaseName: "StarrySkiesTest");
             options = builder.Options;
             ApplicationDbContext applicationDbContext = new ApplicationDbContext(options);
             applicationDbContext.Database.EnsureDeleted();
