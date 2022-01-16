@@ -63,7 +63,7 @@ namespace StarrySkies.Services.Services.Locations
         {
             LocationResponseDto locationToReturn = new LocationResponseDto();
             Location location = _locationRepo.GetLocationById(id);
-            if (location != null)
+            if (location != null && location?.Id != 0)
             {
                 locationToReturn = _mapper.Map<Location, LocationResponseDto>(location);
             }
