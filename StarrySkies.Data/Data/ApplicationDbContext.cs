@@ -14,6 +14,7 @@ namespace StarrySkies.Data.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<WeaponCategory> WeaponCategories { get; set; }
         public DbSet<Vocation> Vocations{ get; set; }
+        public DbSet<Spell> Spells { get; set; }
 
 
     }
