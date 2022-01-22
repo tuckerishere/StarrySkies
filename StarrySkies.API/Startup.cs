@@ -20,6 +20,8 @@ using StarrySkies.Data.Repositories.WeaponCategoryRepo;
 using StarrySkies.Services.Services.WeaponCategories;
 using StarrySkies.Data.Repositories.VocationRepo;
 using StarrySkies.Services.Services.Vocations;
+using StarrySkies.Data.Repositories.SpellRepo;
+using StarrySkies.Services.Services.Spells;
 
 namespace StarrySkies.API
 {
@@ -47,6 +49,8 @@ namespace StarrySkies.API
             services.AddScoped<IWeaponCategoryService, WeaponCategoryService>();
             services.AddScoped<IVocationRepo, VocationRepo>();
             services.AddScoped<IVocationService, VocationService>();
+            services.AddScoped<ISpellRepo, SpellRepo>();
+            services.AddScoped<ISpellService, SpellService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
