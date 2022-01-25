@@ -13,9 +13,15 @@ namespace StarrySkies.Data.Data
 
         public DbSet<Location> Locations { get; set; }
         public DbSet<WeaponCategory> WeaponCategories { get; set; }
-        public DbSet<Vocation> Vocations{ get; set; }
+        public DbSet<Vocation> Vocations { get; set; }
         public DbSet<Spell> Spells { get; set; }
+        public DbSet<VocationSpell> VocationSpells { get; set; }
+    
+    // protected override void OnModelCreating(ModelBuilder modelBuilder){
 
-
-    }
+    //         //Create Composite key for VocationSpell
+    //         modelBuilder.Entity<VocationSpell>()
+    //             .HasKey(vs => new { vs.VocationId, vs.SpellId });
+    //     }
+}
 }

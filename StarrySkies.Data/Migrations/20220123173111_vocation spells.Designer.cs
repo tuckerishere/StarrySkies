@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StarrySkies.Data.Data;
 
 namespace StarrySkies.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220123173111_vocation spells")]
+    partial class vocationspells
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,25 +82,18 @@ namespace StarrySkies.Data.Migrations
 
             modelBuilder.Entity("StarrySkies.Data.Models.VocationSpell", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("LevelLearned")
+                    b.Property<int>("VocationId")
                         .HasColumnType("int");
 
                     b.Property<int>("SpellId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VocationId")
+                    b.Property<int>("LevelLearned")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("VocationId", "SpellId");
 
                     b.HasIndex("SpellId");
-
-                    b.HasIndex("VocationId");
 
                     b.ToTable("VocationSpells");
                 });
