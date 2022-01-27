@@ -40,7 +40,7 @@ namespace StarrySkies.Data.Repositories.VocationSpellRepo
 
         public void UpdateVocationSpell(VocationSpell vocationSpell)
         {
-            _context.Remove(vocationSpell);
+            _context.Update(vocationSpell);
         }
     }
 }

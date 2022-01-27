@@ -33,6 +33,7 @@ namespace StarrySkies.Tests.Data.Tests
             vocationSpell.Spell = spell;
             vocationSpell.SpellId = id;
             vocationSpell.VocationId = id;
+            vocationSpell.Id = id;
 
             return vocationSpell;
         }
