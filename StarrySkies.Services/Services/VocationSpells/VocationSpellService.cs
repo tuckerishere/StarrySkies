@@ -60,6 +60,24 @@ namespace StarrySkies.Services.Services.VocationSpells
             return vsToReturn;
         }
 
+        public VocationSpellResponseDto UpdateVocationSpell(int vocationId, int spellId, 
+            VocationSpellResponseDto updatedVocationSpell)
+        {
+            var vocationSpellToReturn = VocationToUpdate(vocationId, spellId);
+            if(vocationSpellToReturn.SpellId != 0 && vocationSpellToReturn.VocationId != 0)
+            {
+                if(!VocationSpellExists(updatedVocationSpell))
+                {
+                    var vocationSpell = VocationSpellSetValue(updatedVocationSpell);
+                    _vocationSpellRepo.UpdateVocationSpell(vocationSpell);
+                    _vocationSpellRepo.SaveChanges();
+                    vocationSpellToReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+                }
+            }
+
+            return vocationSpellToReturn;
+        }
+
         private VocationSpell VocationSpellSetValue(VocationSpellResponseDto createSpell)
         {
             VocationSpell vocationSpell = new VocationSpell();
@@ -89,5 +107,18 @@ namespace StarrySkies.Services.Services.VocationSpells
 
             return vocationSpellExists;
         }   
+
+        private VocationSpellResponseDto VocationToUpdate(int vocationId, int spellId)
+        {
+            VocationSpellResponseDto vocationSpellReturn = new VocationSpellResponseDto();
+            VocationSpell vocationSpell = _vocationSpellRepo.GetVocationSpell(vocationId, spellId);
+
+            if(vocationSpell != null)
+            {
+                vocationSpellReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+            }
+
+            return vocationSpellReturn;
+        }
     }
 }

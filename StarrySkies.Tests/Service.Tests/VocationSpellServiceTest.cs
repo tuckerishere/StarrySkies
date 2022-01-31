@@ -292,5 +292,39 @@ namespace StarrySkies.Tests.Service.Tests
             Assert.Equal(0, result.VocationId);
             vocationSpellRepo.Verify(x => x.CreateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
         }
+
+        [Fact]
+        public void UpdateVocationSpellSuccess()
+        {
+            //Arrange
+            var vocationSpellRepo = new Mock<IVocationSpellRepo>();
+            var spellRepo = new Mock<ISpellRepo>();
+            var vocationRepo = new Mock<IVocationRepo>();
+            var spell = CreateTestSpell(2, "Test");
+            var vocation = CreateTestVocation(1, "Vocation");
+            var vocationSpellDto = CreateTestVocationSpellResponseDto(1);
+            var vocationSpell = CreateTestVocationSpell(1, "VocationSpell");
+            var updatedVocationSpell = CreateTestVocationSpell(2, "Updated");
+            var updatedVocationSpellDto = CreateTestVocationSpellResponseDto(2);
+
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1));
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
+            vocationRepo.Setup(x => x.GetVocationById(2)).Returns(vocation);
+            spellRepo.Setup(x => x.GetSpell(2)).Returns(spell);
+            vocationSpellRepo.Setup(x => x.UpdateVocationSpell(updatedVocationSpell));
+            vocationSpellRepo.Setup(x => x.SaveChanges());
+
+            var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
+
+            //Act
+            var result = vocationSpellService.UpdateVocationSpell(1, 1, updatedVocationSpellDto);
+
+            //Assert
+            Assert.Equal(2, result.VocationId);
+            Assert.Equal(2, result.SpellId);
+            Assert.Equal(2, result.LevelLearned);
+
+
+        }
     }
 }
