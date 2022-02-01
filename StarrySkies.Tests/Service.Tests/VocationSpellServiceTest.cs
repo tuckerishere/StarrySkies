@@ -414,5 +414,56 @@ namespace StarrySkies.Tests.Service.Tests
             vocationSpellRepo.Verify(x => x.UpdateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
             vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
         }
+
+        [Fact]
+        public void DeleteVocationSpellSuccess()
+        {
+            //Arrange
+            var vocationSpellRepo = new Mock<IVocationSpellRepo>();
+            var vocationRepo = new Mock<IVocationRepo>();
+            var spellRepo = new Mock<ISpellRepo>();
+            var vocationSpell = CreateTestVocationSpell(1, "VocationSpell");
+            var vocationSpellToDelete = CreateTestVocationSpellResponseDto(1);
+
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1,1)).Returns(vocationSpell);
+            vocationSpellRepo.Setup(x => x.DeleteVocationSpell(vocationSpell));
+            vocationSpellRepo.Setup(x => x.SaveChanges()).Returns(true);
+
+            var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
+
+            //Act
+            var result = vocationSpellService.DeleteVocationSpell(vocationSpellToDelete);
+
+            //Assert
+            Assert.Equal(1, result.SpellId);
+            Assert.Equal(1, result.LevelLearned);
+            Assert.Equal(1, result.VocationId);
+            vocationSpellRepo.Verify(x => x.DeleteVocationSpell(It.IsAny<VocationSpell>()), Times.Once);
+            vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Once);
+        }
+
+        [Fact]
+        public void DeleteVocationUnsuccessfulDoesntExist()
+        {
+            //Arrange
+            var vocationSpellRepo = new Mock<IVocationSpellRepo>();
+            var vocationRepo = new Mock<IVocationRepo>();
+            var spellRepo = new Mock<ISpellRepo>();
+            var vocationToDelete = CreateTestVocationSpellResponseDto(1);
+
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1));
+
+            var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
+
+            //Act
+            var result = vocationSpellService.DeleteVocationSpell(vocationToDelete);
+
+            //Assert
+            Assert.Equal(0, result.LevelLearned);
+            Assert.Equal(0, result.VocationId);
+            Assert.Equal(0, result.SpellId);
+            vocationSpellRepo.Verify(x => x.DeleteVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
+            vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
+        }
     }
 }

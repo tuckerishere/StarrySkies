@@ -77,6 +77,20 @@ namespace StarrySkies.Services.Services.VocationSpells
             return vsToReturn;
         }
 
+        public VocationSpellResponseDto DeleteVocationSpell(VocationSpellResponseDto deleteSpell)
+        {
+            VocationSpellResponseDto vsToReturn = new VocationSpellResponseDto();
+            if(VocationSpellExists(deleteSpell))
+            {
+                VocationSpell vocationSpell = _mapper.Map<VocationSpellResponseDto, VocationSpell>(deleteSpell);
+                _vocationSpellRepo.DeleteVocationSpell(vocationSpell);
+                _vocationSpellRepo.SaveChanges();
+                vsToReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+            }
+
+            return vsToReturn;
+        }
+
         private VocationSpell VocationSpellSetValue(VocationSpellResponseDto createSpell)
         {
             VocationSpell vocationSpell = new VocationSpell();
