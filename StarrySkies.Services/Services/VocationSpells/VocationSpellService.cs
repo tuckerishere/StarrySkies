@@ -63,19 +63,18 @@ namespace StarrySkies.Services.Services.VocationSpells
         public VocationSpellResponseDto UpdateVocationSpell(int vocationId, int spellId, 
             VocationSpellResponseDto updatedVocationSpell)
         {
-            var vocationSpellToReturn = VocationToUpdate(vocationId, spellId);
-            if(vocationSpellToReturn.SpellId != 0 && vocationSpellToReturn.VocationId != 0)
+            var vsToReturn = new VocationSpellResponseDto();
+            var vocationSpellToUpdate = VocationToUpdate(vocationId, spellId);
+            if(vocationSpellToUpdate.SpellId != 0 && vocationSpellToUpdate.VocationId != 0
+                && !VocationSpellExists(updatedVocationSpell))
             {
-                if(!VocationSpellExists(updatedVocationSpell))
-                {
                     var vocationSpell = VocationSpellSetValue(updatedVocationSpell);
                     _vocationSpellRepo.UpdateVocationSpell(vocationSpell);
                     _vocationSpellRepo.SaveChanges();
-                    vocationSpellToReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
-                }
+                    vsToReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
             }
 
-            return vocationSpellToReturn;
+            return vsToReturn;
         }
 
         private VocationSpell VocationSpellSetValue(VocationSpellResponseDto createSpell)

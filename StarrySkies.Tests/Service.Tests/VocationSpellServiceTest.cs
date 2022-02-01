@@ -302,13 +302,12 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationRepo = new Mock<IVocationRepo>();
             var spell = CreateTestSpell(2, "Test");
             var vocation = CreateTestVocation(1, "Vocation");
-            var vocationSpellDto = CreateTestVocationSpellResponseDto(1);
             var vocationSpell = CreateTestVocationSpell(1, "VocationSpell");
             var updatedVocationSpell = CreateTestVocationSpell(2, "Updated");
             var updatedVocationSpellDto = CreateTestVocationSpellResponseDto(2);
 
-            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1));
             vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
+            //vocationSpellRepo.Setup(x=>x.GetVocationSpell(2,2)).Returns()
             vocationRepo.Setup(x => x.GetVocationById(2)).Returns(vocation);
             spellRepo.Setup(x => x.GetSpell(2)).Returns(spell);
             vocationSpellRepo.Setup(x => x.UpdateVocationSpell(updatedVocationSpell));
@@ -323,8 +322,97 @@ namespace StarrySkies.Tests.Service.Tests
             Assert.Equal(2, result.VocationId);
             Assert.Equal(2, result.SpellId);
             Assert.Equal(2, result.LevelLearned);
+            vocationSpellRepo.Verify(x => x.UpdateVocationSpell(It.IsAny<VocationSpell>()), Times.Once);
+            vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Once);
+        }
 
+        [Fact]
+        public void UpdateVocationSpellExistsNotSuccessful()
+        {
+            //Arrange
+            var vocationSpellRepo = new Mock<IVocationSpellRepo>();
+            var spellRepo = new Mock<ISpellRepo>();
+            var vocationRepo = new Mock<IVocationRepo>();
+            var spell = CreateTestSpell(2, "Test");
+            var vocation = CreateTestVocation(1, "Vocation");
+            var vocationSpell = CreateTestVocationSpell(1, "VocationSpell");
+            var updatedVocationSpell = CreateTestVocationSpell(2, "Updated");
+            var updatedVocationSpellDto = CreateTestVocationSpellResponseDto(2);
+            var vocationSpellTwo = CreateTestVocationSpell(2, "Twice");
 
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(2, 2)).Returns(vocationSpellTwo);
+            vocationRepo.Setup(x => x.GetVocationById(2)).Returns(vocation);
+            spellRepo.Setup(x => x.GetSpell(2)).Returns(spell);
+
+            var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
+
+            //Act
+            var result = vocationSpellService.UpdateVocationSpell(1, 1, updatedVocationSpellDto);
+
+            //Assert
+            Assert.Equal(0, result.VocationId);
+            Assert.Equal(0, result.SpellId);
+            Assert.Equal(0, result.LevelLearned);
+            vocationSpellRepo.Verify(x => x.CreateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
+            vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
+        }
+
+        [Fact]
+        public void CreateVocationDoesNotExist()
+        {
+            //Arrange
+            var vocationSpellRepo = new Mock<IVocationSpellRepo>();
+            var vocationRepo = new Mock<IVocationRepo>();
+            var spellRepo = new Mock<ISpellRepo>();
+            var spell = CreateTestSpell(1, "Spell");
+            var vocationSpell = CreateTestVocationSpell(1, "VocationSpell");
+            var updatedVocationSpellDto = CreateTestVocationSpellResponseDto(1);
+
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
+            spellRepo.Setup(x => x.GetSpell(1)).Returns(spell);
+            var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
+
+            //Act
+            var result = vocationSpellService.UpdateVocationSpell(1, 1, updatedVocationSpellDto);
+
+            //Assert
+            Assert.Equal(0, result.SpellId);
+            Assert.Equal(0, result.VocationId);
+            Assert.Equal(0, result.LevelLearned);
+            vocationSpellRepo.Verify(x => x.CreateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
+            vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
+        }
+
+        [Fact]
+        public void UpdateVocationSpellExistsNoSuccess()
+        {
+            //Arrange
+            var vocationSpellRepo = new Mock<IVocationSpellRepo>();
+            var spellRepo = new Mock<ISpellRepo>();
+            var vocationRepo = new Mock<IVocationRepo>();
+            var vocationSpell = CreateTestVocationSpell(1, "VocationSpell");
+            var vocationSpellExists = CreateTestVocationSpell(2, "Exists");
+            var spell = CreateTestSpell(2, "Exists");
+            var vocation = CreateTestVocation(2, "VocationExists");
+            var updatedVocation = CreateTestVocationSpellResponseDto(2);
+
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(2, 2)).Returns(vocationSpellExists);
+            spellRepo.Setup(x => x.GetSpell(2)).Returns(spell);
+            vocationRepo.Setup(x => x.GetVocationById(2)).Returns(vocation);
+
+            var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
+
+            //Act
+            var result = vocationSpellService.UpdateVocationSpell(1, 1, updatedVocation);
+
+            //Assert
+            Assert.Equal(0, result.SpellId);
+            Assert.Equal(0, result.VocationId);
+            Assert.Equal(0, result.LevelLearned);
+            vocationSpellRepo.Verify(x => x.UpdateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
+            vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
         }
     }
 }
