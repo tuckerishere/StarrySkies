@@ -7,6 +7,7 @@ using StarrySkies.Data.Models;
 using StarrySkies.Services.DTOs;
 using StarrySkies.Services.DTOs.SpellDtos;
 using StarrySkies.Services.DTOs.VocationDtos;
+using StarrySkies.Services.DTOs.VocationSpellDtos;
 using StarrySkies.Services.DTOs.WeaponCategoryDTOs;
 
 namespace StarrySkies.Services.Mapping
@@ -23,6 +24,7 @@ namespace StarrySkies.Services.Mapping
             CreateMap<VocationResponseDto, Vocation>();
             CreateMap<CreateSpellDto, Spell>();
             CreateMap<SpellResponseDto, Spell>();
+            CreateMap<VocationSpellResponseDto, VocationSpell>();
         }
     }
 }
