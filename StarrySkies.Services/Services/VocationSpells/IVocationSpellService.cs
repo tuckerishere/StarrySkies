@@ -8,5 +8,7 @@ namespace StarrySkies.Services.Services.VocationSpells
         VocationSpellResponseDto GetVocationSpell(int vocationId, int spellId);
         VocationSpellResponseDto CreateVocationSpell(VocationSpellResponseDto createdVocationSpell);
         ICollection<VocationSpellResponseDto> GetVocationSpells();
+        VocationSpellResponseDto DeleteVocationSpell(int vocationId, int spellId);
+        VocationSpellResponseDto UpdateVocationSpell(int vocationId, int spellId, VocationSpellResponseDto updateVocationSpell);
     }
 }

@@ -64,7 +64,7 @@ namespace StarrySkies.Services.Services.VocationSpells
             VocationSpellResponseDto updatedVocationSpell)
         {
             var vsToReturn = new VocationSpellResponseDto();
-            var vocationSpellToUpdate = VocationToUpdate(vocationId, spellId);
+            var vocationSpellToUpdate = GetVocationByIds(vocationId, spellId);
             if(vocationSpellToUpdate.SpellId != 0 && vocationSpellToUpdate.VocationId != 0
                 && !VocationSpellExists(updatedVocationSpell))
             {
@@ -77,9 +77,10 @@ namespace StarrySkies.Services.Services.VocationSpells
             return vsToReturn;
         }
 
-        public VocationSpellResponseDto DeleteVocationSpell(VocationSpellResponseDto deleteSpell)
+        public VocationSpellResponseDto DeleteVocationSpell(int vocationId, int spellId)
         {
             VocationSpellResponseDto vsToReturn = new VocationSpellResponseDto();
+            var deleteSpell = GetVocationByIds(vocationId, spellId);
             if(VocationSpellExists(deleteSpell))
             {
                 VocationSpell vocationSpell = _mapper.Map<VocationSpellResponseDto, VocationSpell>(deleteSpell);
@@ -121,7 +122,7 @@ namespace StarrySkies.Services.Services.VocationSpells
             return vocationSpellExists;
         }   
 
-        private VocationSpellResponseDto VocationToUpdate(int vocationId, int spellId)
+        private VocationSpellResponseDto GetVocationByIds(int vocationId, int spellId)
         {
             VocationSpellResponseDto vocationSpellReturn = new VocationSpellResponseDto();
             VocationSpell vocationSpell = _vocationSpellRepo.GetVocationSpell(vocationId, spellId);

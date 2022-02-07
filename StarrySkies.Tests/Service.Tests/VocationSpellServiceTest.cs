@@ -432,7 +432,7 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
 
             //Act
-            var result = vocationSpellService.DeleteVocationSpell(vocationSpellToDelete);
+            var result = vocationSpellService.DeleteVocationSpell(1,1);
 
             //Assert
             Assert.Equal(1, result.SpellId);
@@ -456,7 +456,7 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
 
             //Act
-            var result = vocationSpellService.DeleteVocationSpell(vocationToDelete);
+            var result = vocationSpellService.DeleteVocationSpell(1,1);
 
             //Assert
             Assert.Equal(0, result.LevelLearned);
