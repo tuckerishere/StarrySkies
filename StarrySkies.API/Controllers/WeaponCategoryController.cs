@@ -4,6 +4,7 @@ using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using StarrySkies.Services.DTOs.WeaponCategoryDTOs;
+using StarrySkies.Services.ResponseModels;
 using StarrySkies.Services.Services.WeaponCategories;
 
 namespace StarrySkies.API.Controllers
@@ -20,17 +21,18 @@ namespace StarrySkies.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(List<WeaponCategoryResponseDto>))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<List<WeaponCategoryResponseDto>>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<List<WeaponCategoryResponseDto>> GetAllWeaponCategories()
+        public ActionResult<ServiceResponse<List<WeaponCategoryResponseDto>>> GetAllWeaponCategories()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            List<WeaponCategoryResponseDto> weaponCategories = _categoryService.GetWeaponCategories().ToList();
+            ServiceResponse<List<WeaponCategoryResponseDto>> weaponCategories = new ServiceResponse<List<WeaponCategoryResponseDto>>();
+            weaponCategories.Data = _categoryService.GetWeaponCategories().Data.ToList();
             return Ok(weaponCategories);
         }
 
@@ -38,80 +40,80 @@ namespace StarrySkies.API.Controllers
         [ProducesResponseType(200, Type = typeof(WeaponCategoryResponseDto))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<WeaponCategoryResponseDto> GetWeaponCategory(int id)
+        public ActionResult<ServiceResponse<WeaponCategoryResponseDto>> GetWeaponCategory(int id)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            WeaponCategoryResponseDto categoryToReturn = _categoryService.GetWeaponCategoryById(id);
+            ServiceResponse<WeaponCategoryResponseDto> categoryToReturn = _categoryService.GetWeaponCategoryById(id);
 
-            if(categoryToReturn == null || categoryToReturn.Id == 0)
+            if(categoryToReturn.Data == null)
             {
-                return NotFound();
+                return NotFound(categoryToReturn);
             }
 
             return Ok(categoryToReturn);
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(200, Type = typeof(WeaponCategoryResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<WeaponCategoryResponseDto>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<WeaponCategoryResponseDto> DeleteWeaponCategory(int id)
+        public ActionResult<ServiceResponse<WeaponCategoryResponseDto>> DeleteWeaponCategory(int id)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            WeaponCategoryResponseDto categoryToDelete = _categoryService.DeleteWeaponCategory(id);
+            ServiceResponse<WeaponCategoryResponseDto> categoryToDelete = _categoryService.DeleteWeaponCategory(id);
 
-            if(categoryToDelete == null || categoryToDelete.Id == 0)
+            if(!categoryToDelete.Success)
             {
-                return NotFound();
+                return NotFound(categoryToDelete);
             }
 
             return Ok(categoryToDelete);
         }
 
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(WeaponCategoryResponseDto))]
+        [ProducesResponseType(201, Type = typeof(ServiceResponse<WeaponCategoryResponseDto>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<CreateWeaponCategoryDto> CreateWewaponCategory(CreateWeaponCategoryDto createWeaponCategory)
+        public ActionResult<ServiceResponse<CreateWeaponCategoryDto>> CreateWewaponCategory(CreateWeaponCategoryDto createWeaponCategory)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            WeaponCategoryResponseDto createdCategory = _categoryService.CreateWeaponCategory(createWeaponCategory);
+            ServiceResponse<WeaponCategoryResponseDto> createdCategory = _categoryService.CreateWeaponCategory(createWeaponCategory);
 
-            if(createdCategory.Name == null)
+            if(!createdCategory.Success)
             {
-                return BadRequest("Please enter Weapon Category Name.");
+                return BadRequest(createdCategory);
             }
 
-            return CreatedAtAction(nameof(GetWeaponCategory), new { id = createdCategory.Id }, createdCategory);
+            return CreatedAtAction(nameof(GetWeaponCategory), new { id = createdCategory.Data.Id }, createdCategory);
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(200, Type=typeof(WeaponCategoryResponseDto))]
+        [ProducesResponseType(200, Type=typeof(ServiceResponse<WeaponCategoryResponseDto>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<WeaponCategoryResponseDto> UpdateWeaponCategory(int id, [FromBody]CreateWeaponCategoryDto updateWeaponCategory){
+        public ActionResult<ServiceResponse<WeaponCategoryResponseDto>> UpdateWeaponCategory(int id, [FromBody]CreateWeaponCategoryDto updateWeaponCategory){
             if (updateWeaponCategory.Name == null || updateWeaponCategory.Name.Trim() == "")
             {
-                return BadRequest("Please Weapon Category enter name.");
+                return BadRequest("Please Enter Weapon Category Name");
             }
 
-            WeaponCategoryResponseDto updatedWeaponCategory = _categoryService.UpdateWeaponCategory(id, updateWeaponCategory);
-{}
-            if(updatedWeaponCategory.Id == 0 )
+            ServiceResponse<WeaponCategoryResponseDto> updatedWeaponCategory = _categoryService.UpdateWeaponCategory(id, updateWeaponCategory);
+
+            if(!updatedWeaponCategory.Success)
             {
-                return NotFound();
+                return NotFound(updatedWeaponCategory);
             }
 
             return Ok(updatedWeaponCategory);
