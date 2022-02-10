@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using StarrySkies.Services.DTOs.VocationDtos;
+using StarrySkies.Services.ResponseModels;
 using StarrySkies.Services.Services.Vocations;
 
 namespace StarrySkies.API.Controllers
@@ -18,31 +19,31 @@ namespace StarrySkies.API.Controllers
 
         [HttpGet("id", Name = "GetVocation")]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type=typeof(VocationResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<VocationResponseDto>))]
         [ProducesResponseType(400)]
-        public ActionResult<VocationResponseDto> GetVocation(int id)
+        public ActionResult<ServiceResponse<VocationResponseDto>> GetVocation(int id)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            VocationResponseDto vocationToReturn = _vocationService.GetVocationById(id);
+            ServiceResponse<VocationResponseDto> vocationToReturn = _vocationService.GetVocationById(id);
 
-            if(vocationToReturn == null || vocationToReturn?.Id == 0)
+            if (!vocationToReturn.Success)
             {
-                return NotFound();
+                return NotFound(vocationToReturn);
             }
 
             return Ok(vocationToReturn);
         }
 
         [HttpGet]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<List<VocationResponseDto>>))]
         [ProducesResponseType(400)]
-        public ActionResult<List<VocationResponseDto>> GetAllVocations()
+        public ActionResult<ServiceResponse<List<VocationResponseDto>>> GetAllVocations()
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -53,64 +54,57 @@ namespace StarrySkies.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(201, Type=typeof(VocationResponseDto))]
+        [ProducesResponseType(201, Type = typeof(ServiceResponse<VocationResponseDto>))]
         [ProducesResponseType(400)]
-        public ActionResult<VocationResponseDto> CreateVocation([FromBody] CreateVocationDto vocation)
+        public ActionResult<ServiceResponse<VocationResponseDto>> CreateVocation([FromBody] CreateVocationDto vocation)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            VocationResponseDto vocationToCreate = new VocationResponseDto();
+            var vocationToCreate = _vocationService.CreateVocation(vocation);
 
-            if(vocation == null || string.IsNullOrEmpty(vocation?.Name))
+            if (!vocationToCreate.Success)
             {
-                return BadRequest("Please enter Name.");
+                return BadRequest(vocationToCreate);
             }
 
-            vocationToCreate = _vocationService.CreateVocation(vocation);
-
-            return CreatedAtAction(nameof(GetVocation), new { id = vocationToCreate.Id }, vocationToCreate);
+            return CreatedAtAction(nameof(GetVocation), new { id = vocationToCreate.Data.Id }, vocationToCreate);
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(200, Type=typeof(VocationResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<VocationResponseDto>))]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public ActionResult<VocationResponseDto> DeleteVocation(int id)
+        public ActionResult<ServiceResponse<VocationResponseDto>> DeleteVocation(int id)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             var vocationToDelete = _vocationService.DeleteVocation(id);
 
-            if(vocationToDelete == null || vocationToDelete?.Id == 0)
+            if (!vocationToDelete.Success)
             {
-                return NotFound();
+                return NotFound(vocationToDelete);
             }
 
             return Ok(vocationToDelete);
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(200, Type=typeof(VocationResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<VocationResponseDto>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<VocationResponseDto> UpdateVocation(int id, CreateVocationDto vocation)
+        public ActionResult<ServiceResponse<VocationResponseDto>> UpdateVocation(int id, CreateVocationDto vocation)
         {
-            if(vocation == null || string.IsNullOrEmpty(vocation?.Name))
-            {
-                return BadRequest("Please enter Vocation Name");
-            }
-
             var vocationToUpdate = _vocationService.UpdateVocation(id, vocation);
 
-            if(vocationToUpdate == null || vocationToUpdate?.Id ==0)
+            if (!vocationToUpdate.Success)
             {
-                return NotFound();
+                return BadRequest(vocationToUpdate);
             }
 
             return Ok(vocationToUpdate);

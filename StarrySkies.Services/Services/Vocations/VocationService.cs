@@ -3,6 +3,7 @@ using AutoMapper;
 using StarrySkies.Data.Models;
 using StarrySkies.Data.Repositories.VocationRepo;
 using StarrySkies.Services.DTOs.VocationDtos;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Services.Services.Vocations
 {
@@ -15,65 +16,83 @@ namespace StarrySkies.Services.Services.Vocations
             _vocationRepo = vocationRepo;
             _mapper = mapper;
         }
-        public VocationResponseDto CreateVocation(CreateVocationDto vocation)
+        public ServiceResponse<VocationResponseDto> CreateVocation(CreateVocationDto vocation)
         {
-            VocationResponseDto createdVocation = new VocationResponseDto();
+            ServiceResponse<VocationResponseDto> createdVocation = new ServiceResponse<VocationResponseDto>();
 
-            if(vocation != null
-                && !string.IsNullOrEmpty(vocation?.Name)){
+            if (vocation != null
+                && !string.IsNullOrEmpty(vocation?.Name))
+            {
                 var vocationToCreate = _mapper.Map<CreateVocationDto, Vocation>(vocation);
                 _vocationRepo.CreateVocation(vocationToCreate);
                 _vocationRepo.SaveChanges();
-                createdVocation = _mapper.Map<Vocation, VocationResponseDto>(vocationToCreate);
+                createdVocation.Data = _mapper.Map<Vocation, VocationResponseDto>(vocationToCreate);
+            }
+            else
+            {
+                createdVocation.Success = false;
+                createdVocation.Message = "Unable to create Vocation";
             }
 
             return createdVocation;
         }
 
-        public VocationResponseDto DeleteVocation(int id)
+        public ServiceResponse<VocationResponseDto> DeleteVocation(int id)
         {
             var vocation = _vocationRepo.GetVocationById(id);
-            VocationResponseDto deletedVocation = new VocationResponseDto();
-            
-            if(vocation != null && vocation?.Id != 0)
+            ServiceResponse<VocationResponseDto> deletedVocation = new ServiceResponse<VocationResponseDto>();
+
+            if (vocation != null)
             {
                 _vocationRepo.DeleteVocation(vocation);
                 _vocationRepo.SaveChanges();
-                deletedVocation = _mapper.Map<Vocation, VocationResponseDto>(vocation);
+                deletedVocation.Data = _mapper.Map<Vocation, VocationResponseDto>(vocation);
+            }
+            else
+            {
+                deletedVocation.Success = false;
+                deletedVocation.Message = "Unable to Delete Vocation";
             }
 
             return deletedVocation;
         }
 
-        public VocationResponseDto GetVocationById(int id)
+        public ServiceResponse<VocationResponseDto> GetVocationById(int id)
         {
             var vocation = _vocationRepo.GetVocationById(id);
-            VocationResponseDto vocationToReturn = new VocationResponseDto();
-            if(vocation != null && vocation?.Id != 0)
+            ServiceResponse<VocationResponseDto> vocationToReturn = new ServiceResponse<VocationResponseDto>();
+            if (vocation != null)
             {
-                vocationToReturn = _mapper.Map<Vocation, VocationResponseDto>(vocation);
+                vocationToReturn.Data = _mapper.Map<Vocation, VocationResponseDto>(vocation);
             }
 
             return vocationToReturn;
         }
 
-        public ICollection<VocationResponseDto> GetVocations()
+        public ServiceResponse<ICollection<VocationResponseDto>> GetVocations()
         {
+            var serviceResponse = new ServiceResponse<ICollection<VocationResponseDto>>();
             var vocations = _vocationRepo.GetVocations();
-            return _mapper.Map<ICollection<Vocation>, ICollection<VocationResponseDto>>(vocations);
+            serviceResponse.Data = _mapper.Map<ICollection<Vocation>, ICollection<VocationResponseDto>>(vocations);
+            return serviceResponse;
         }
 
-        public VocationResponseDto UpdateVocation(int id, CreateVocationDto vocation)
+        public ServiceResponse<VocationResponseDto> UpdateVocation(int id, CreateVocationDto vocation)
         {
             var vocationToUpdate = _vocationRepo.GetVocationById(id);
-            VocationResponseDto vocationToReturn = new VocationResponseDto();
-            if(vocationToUpdate != null 
-            && vocationToUpdate?.Id != 0
-            && !string.IsNullOrEmpty(vocation?.Name)){
+            ServiceResponse<VocationResponseDto> vocationToReturn = new ServiceResponse<VocationResponseDto>();
+            if (vocationToUpdate != null
+            && !string.IsNullOrEmpty(vocation?.Name))
+            {
                 vocationToUpdate.Name = vocation.Name;
                 _vocationRepo.UpdateVocation(vocationToUpdate);
                 _vocationRepo.SaveChanges();
-                vocationToReturn = _mapper.Map<Vocation, VocationResponseDto>(vocationToUpdate);
+                vocationToReturn.Data = _mapper.Map<Vocation, VocationResponseDto>(vocationToUpdate);
+            }
+            else
+            {
+                vocationToReturn.Success = false;
+                vocationToReturn.Message = "Unable to update Vocation.";
             }
 
             return vocationToReturn;

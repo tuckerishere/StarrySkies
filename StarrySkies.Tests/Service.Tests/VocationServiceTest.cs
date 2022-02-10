@@ -27,7 +27,7 @@ namespace StarrySkies.Tests.Service.Tests
                 _mapper = mapper;
             }
         }
-        
+
         [Fact]
         public void GetAllVocationsTest()
         {
@@ -50,7 +50,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.GetVocations();
 
             //Assert
-            Assert.Equal(2, result.Count);
+            Assert.Equal(2, result.Data.Count);
         }
 
         [Fact]
@@ -60,14 +60,14 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationRepo = new Mock<IVocationRepo>();
             ICollection<Vocation> vocationList = new List<Vocation>();
 
-            vocationRepo.Setup(x => x.GetVocations()).Returns(vocationList);
+            vocationRepo.Setup(x => x.GetVocations());
             var vocationService = new VocationService(vocationRepo.Object, _mapper);
 
             //Act
             var results = vocationService.GetVocations();
 
             //Assert
-            Assert.Empty(results);
+            Assert.Empty(results.Data);
         }
 
         [Fact]
@@ -86,8 +86,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.GetVocationById(1);
 
             //Arrange
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Sage", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Sage", result.Data.Name);
         }
 
         [Fact]
@@ -97,15 +97,14 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationRepo = new Mock<IVocationRepo>();
             Vocation vocation = new Vocation();
 
-            vocationRepo.Setup(x => x.GetVocationById(1)).Returns(vocation);
+            vocationRepo.Setup(x => x.GetVocationById(1));
             var vocationService = new VocationService(vocationRepo.Object, _mapper);
 
             //Act
             var result = vocationService.GetVocationById(1);
 
             //Arrange
-            Assert.Equal(0, result.Id);
-            Assert.Null(result.Name);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -129,14 +128,14 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.UpdateVocation(1, updatedVocation);
 
             //Assert
-            Assert.Equal("Thief", result.Name);
-            Assert.Equal(1, result.Id);
+            Assert.Equal("Thief", result.Data.Name);
+            Assert.Equal(1, result.Data.Id);
             vocationRepo.Verify(x => x.SaveChanges(), Times.Once);
             vocationRepo.Verify(x => x.UpdateVocation(It.IsAny<Vocation>()), Times.Once);
         }
 
         [Fact]
-        public void UpdateVocationDoesntExist() 
+        public void UpdateVocationDoesntExist()
         {
             //Arrange
             var vocationRepo = new Mock<IVocationRepo>();
@@ -144,14 +143,14 @@ namespace StarrySkies.Tests.Service.Tests
             CreateVocationDto createVocationDto = new CreateVocationDto();
             createVocationDto.Name = "Sage";
 
-            vocationRepo.Setup(x => x.GetVocationById(1)).Returns(vocation);
+            vocationRepo.Setup(x => x.GetVocationById(1));
             var vocationService = new VocationService(vocationRepo.Object, _mapper);
 
             //Act
             var result = vocationService.UpdateVocation(1, createVocationDto);
 
             //Assert
-            Assert.Equal(0, result.Id);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -173,7 +172,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.UpdateVocation(1, updatedVocation);
 
             //Assert
-            Assert.Equal(0, result.Id);
+            Assert.Null(result.Data);
+            Assert.False(result.Success);
         }
 
         [Fact]
@@ -192,7 +192,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.UpdateVocation(1, null);
 
             //Assert
-            Assert.Equal(0, result.Id);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -213,8 +213,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.DeleteVocation(1);
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Thief", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Thief", result.Data.Name);
             vocationRepo.Verify(x => x.DeleteVocation(It.IsAny<Vocation>()), Times.Once);
             vocationRepo.Verify(x => x.SaveChanges(), Times.Once);
         }
@@ -226,14 +226,14 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationRepo = new Mock<IVocationRepo>();
             Vocation vocation = new Vocation();
 
-            vocationRepo.Setup(x => x.GetVocationById(1)).Returns(vocation);
+            vocationRepo.Setup(x => x.GetVocationById(1));
             var vocationService = new VocationService(vocationRepo.Object, _mapper);
 
             //Act
             var result = vocationService.DeleteVocation(1);
 
             //Assert
-            Assert.Equal(0, result.Id);
+            Assert.Null(result.Data);
             vocationRepo.Verify(x => x.DeleteVocation(It.IsAny<Vocation>()), Times.Never);
         }
 
@@ -257,8 +257,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.CreateVocation(createVocation);
 
             //Assert
-            Assert.Equal("Barbarian", result.Name);
-            vocationRepo.Verify(x=>x.CreateVocation(It.IsAny<Vocation>()), Times.Once);
+            Assert.Equal("Barbarian", result.Data.Name);
+            vocationRepo.Verify(x => x.CreateVocation(It.IsAny<Vocation>()), Times.Once);
             vocationRepo.Verify(x => x.SaveChanges(), Times.Once);
         }
 
@@ -276,8 +276,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.CreateVocation(createdVocation);
 
             //Assert
-            Assert.Equal(0, result.Id);
-            Assert.Null(result.Name);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -291,8 +290,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.CreateVocation(null);
 
             //Assert
-            Assert.Equal(0, result.Id);
-            Assert.Null(result.Name);
+            Assert.Null(result.Data);
         }
     }
 }
