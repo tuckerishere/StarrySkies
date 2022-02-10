@@ -4,15 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using StarrySkies.Data.Models;
 using StarrySkies.Services.DTOs;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Services.Services.Locations
 {
     public interface ILocationService
     {
-        ICollection<LocationResponseDto> GetAllLocations();
-        LocationResponseDto GetLocation(int id);
-        LocationResponseDto CreateLocation(CreateLocationDto location);
-        LocationResponseDto DeleteLocation(int id);
-        LocationResponseDto UpdateLocation(int id, CreateLocationDto location);
+        ServiceResponse<ICollection<LocationResponseDto>> GetAllLocations();
+        ServiceResponse<LocationResponseDto> GetLocation(int id);
+        ServiceResponse<LocationResponseDto> CreateLocation(CreateLocationDto location);
+        ServiceResponse<LocationResponseDto> DeleteLocation(int id);
+        ServiceResponse<LocationResponseDto> UpdateLocation(int id, CreateLocationDto location);
     }
 }

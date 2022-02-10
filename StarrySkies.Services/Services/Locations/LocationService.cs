@@ -6,6 +6,7 @@ using AutoMapper;
 using StarrySkies.Data.Models;
 using StarrySkies.Data.Repositories.LocationRepo;
 using StarrySkies.Services.DTOs;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Services.Services.Locations
 {
@@ -18,61 +19,74 @@ namespace StarrySkies.Services.Services.Locations
             _locationRepo = locationrepo;
             _mapper = mapper;
         }
-        public LocationResponseDto CreateLocation(CreateLocationDto location)
+        public ServiceResponse<LocationResponseDto> CreateLocation(CreateLocationDto location)
         {
-            LocationResponseDto locationToReturn = new LocationResponseDto();
+            ServiceResponse<LocationResponseDto> locationToReturn = new ServiceResponse<LocationResponseDto>();
             Location createdLocation = _mapper.Map<CreateLocationDto, Location>(location);
             if (createdLocation.Name != null
                 && createdLocation.Name.Trim() != "")
             {
                 _locationRepo.CreateLocation(createdLocation);
                 _locationRepo.SaveChanges();
-                locationToReturn = _mapper.Map<Location, LocationResponseDto>(createdLocation);
+                locationToReturn.Data = _mapper.Map<Location, LocationResponseDto>(createdLocation);
+            }
+            else
+            {
+                locationToReturn.Success = false;
+                locationToReturn.Message = "Please enter location name.";
             }
 
             return locationToReturn;
         }
 
-        public LocationResponseDto DeleteLocation(int id)
+        public ServiceResponse<LocationResponseDto> DeleteLocation(int id)
         {
-            LocationResponseDto locationToReturn = new LocationResponseDto();
+            ServiceResponse<LocationResponseDto> locationToReturn = new ServiceResponse<LocationResponseDto>();
             Location locationExists = _locationRepo.GetLocationById(id);
 
             if (locationExists != null)
             {
-                if (locationExists.Id != 0)
-                {
-                    _locationRepo.DeleteLocation(locationExists);
-                    _locationRepo.SaveChanges();
-                    locationToReturn = _mapper.Map<Location, LocationResponseDto>(locationExists);
-                }
+                _locationRepo.DeleteLocation(locationExists);
+                _locationRepo.SaveChanges();
+                locationToReturn.Data = _mapper.Map<Location, LocationResponseDto>(locationExists);
+            }
+            else
+            {
+                locationToReturn.Success = false;
+                locationToReturn.Message = "Location not found.";
             }
 
             return locationToReturn;
         }
 
-        public ICollection<LocationResponseDto> GetAllLocations()
+        public ServiceResponse<ICollection<LocationResponseDto>> GetAllLocations()
         {
             ICollection<Location> locations = _locationRepo.GetAllLocations();
-            ICollection<LocationResponseDto> locationsToReturn = _mapper.Map<ICollection<Location>, ICollection<LocationResponseDto>>(locations);
+            ServiceResponse<ICollection<LocationResponseDto>> locationsToReturn = new ServiceResponse<ICollection<LocationResponseDto>>();
+            locationsToReturn.Data = _mapper.Map<ICollection<Location>, ICollection<LocationResponseDto>>(locations);
 
             return locationsToReturn;
         }
 
-        public LocationResponseDto GetLocation(int id)
+        public ServiceResponse<LocationResponseDto> GetLocation(int id)
         {
-            LocationResponseDto locationToReturn = new LocationResponseDto();
+            ServiceResponse<LocationResponseDto> locationToReturn = new ServiceResponse<LocationResponseDto>();
             Location location = _locationRepo.GetLocationById(id);
-            if (location != null && location?.Id != 0)
+            if (location != null)
             {
-                locationToReturn = _mapper.Map<Location, LocationResponseDto>(location);
+                locationToReturn.Data = _mapper.Map<Location, LocationResponseDto>(location);
+            }
+            else
+            {
+                locationToReturn.Success = false;
+                locationToReturn.Message = "Location not found.";
             }
             return locationToReturn;
         }
 
-        public LocationResponseDto UpdateLocation(int id, CreateLocationDto location)
+        public ServiceResponse<LocationResponseDto> UpdateLocation(int id, CreateLocationDto location)
         {
-            LocationResponseDto locationToReturn = new LocationResponseDto();
+            ServiceResponse<LocationResponseDto> locationToReturn = new ServiceResponse<LocationResponseDto>();
             Location locationToUpdate = _locationRepo.GetLocationById(id);
             if (locationToUpdate != null
                 && location.Name != null
@@ -83,8 +97,12 @@ namespace StarrySkies.Services.Services.Locations
 
                 _locationRepo.UpdateLocation(locationToUpdate);
                 _locationRepo.SaveChanges();
-                locationToReturn = _mapper.Map<Location, LocationResponseDto>(locationToUpdate);
-
+                locationToReturn.Data = _mapper.Map<Location, LocationResponseDto>(locationToUpdate);
+            }
+            else
+            {
+                locationToReturn.Success = false;
+                locationToReturn.Message = "Unable to updated location.";
             }
             return locationToReturn;
         }
