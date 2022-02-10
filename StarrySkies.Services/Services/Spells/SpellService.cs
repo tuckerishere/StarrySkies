@@ -3,6 +3,7 @@ using AutoMapper;
 using StarrySkies.Data.Models;
 using StarrySkies.Data.Repositories.SpellRepo;
 using StarrySkies.Services.DTOs.SpellDtos;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Services.Services.Spells
 {
@@ -15,61 +16,78 @@ namespace StarrySkies.Services.Services.Spells
             _spellRepo = spellRepo;
             _mapper = mapper;
         }
-        public SpellResponseDto CreateSpell(CreateSpellDto createSpell)
+        public ServiceResponse<SpellResponseDto> CreateSpell(CreateSpellDto createSpell)
         {
-            SpellResponseDto spellToReturn = new SpellResponseDto();
-            if(!string.IsNullOrEmpty(createSpell.Name)){
+            ServiceResponse<SpellResponseDto> spellToReturn = new ServiceResponse<SpellResponseDto>();
+            if (!string.IsNullOrEmpty(createSpell.Name))
+            {
                 if (createSpell?.MPCost >= 0 && createSpell?.MPCost <= 99)
                 {
                     Spell spellToCreate = _mapper.Map<CreateSpellDto, Spell>(createSpell);
                     _spellRepo.CreateSpell(spellToCreate);
                     _spellRepo.SaveChanges();
-                    spellToReturn = _mapper.Map<Spell, SpellResponseDto>(spellToCreate);
+                    spellToReturn.Data = _mapper.Map<Spell, SpellResponseDto>(spellToCreate);
                 }
+            }
+            else
+            {
+                spellToReturn.Success = false;
+                spellToReturn.Message = "Unable to create Spell.";
             }
 
             return spellToReturn;
         }
 
-        public SpellResponseDto DeleteSpell(int id)
+        public ServiceResponse<SpellResponseDto> DeleteSpell(int id)
         {
-            SpellResponseDto deletedSpellReturn = new SpellResponseDto();
+            ServiceResponse<SpellResponseDto> deletedSpellReturn = new ServiceResponse<SpellResponseDto>();
             Spell spellToDelete = _spellRepo.GetSpell(id);
-            if(spellToDelete != null && spellToDelete?.Id != 0)
+            if (spellToDelete != null)
             {
                 _spellRepo.DeleteSpell(spellToDelete);
                 _spellRepo.SaveChanges();
-                deletedSpellReturn = _mapper.Map<Spell, SpellResponseDto>(spellToDelete);
+                deletedSpellReturn.Data = _mapper.Map<Spell, SpellResponseDto>(spellToDelete);
+            }
+            else
+            {
+                deletedSpellReturn.Success = false;
+                deletedSpellReturn.Message = "Spell does not exist.";
             }
 
             return deletedSpellReturn;
         }
 
-        public ICollection<SpellResponseDto> GetAllSpells()
+        public ServiceResponse<ICollection<SpellResponseDto>> GetAllSpells()
         {
+            var serviceResponse = new ServiceResponse<ICollection<SpellResponseDto>>();
             var spellsToReturn = _spellRepo.GetSpells();
-            return _mapper.Map<ICollection<Spell>, ICollection<SpellResponseDto>>(spellsToReturn);
+            serviceResponse.Data = _mapper.Map<ICollection<Spell>, ICollection<SpellResponseDto>>(spellsToReturn);
 
+            return serviceResponse;
         }
 
-        public SpellResponseDto GetSpell(int id)
+        public ServiceResponse<SpellResponseDto> GetSpell(int id)
         {
-            SpellResponseDto spellToReturn = new SpellResponseDto();
+            ServiceResponse<SpellResponseDto> spellToReturn = new ServiceResponse<SpellResponseDto>();
             var spell = _spellRepo.GetSpell(id);
-            if(spell != null && spell?.Id !=0)
+            if (spell != null && spell?.Id != 0)
             {
-                spellToReturn = _mapper.Map<Spell, SpellResponseDto>(spell);
+                spellToReturn.Data = _mapper.Map<Spell, SpellResponseDto>(spell);
+            }
+            else
+            {
+                spellToReturn.Success = false;
+                spellToReturn.Message = "Spell not found.";
             }
 
             return spellToReturn;
         }
 
-        public SpellResponseDto UpdateSpell(int id, CreateSpellDto updateSpell)
+        public ServiceResponse<SpellResponseDto> UpdateSpell(int id, CreateSpellDto updateSpell)
         {
-            SpellResponseDto spellToReturn = new SpellResponseDto();
+            ServiceResponse<SpellResponseDto> spellToReturn = new ServiceResponse<SpellResponseDto>();
             Spell spell = _spellRepo.GetSpell(id);
-            if(spell != null 
-                && spell.Id != 0
+            if (spell != null
                 && !string.IsNullOrWhiteSpace(updateSpell.Name))
             {
                 spell.Name = updateSpell.Name;
@@ -78,7 +96,12 @@ namespace StarrySkies.Services.Services.Spells
                 spell.SpellTarget = updateSpell.SpellTarget;
                 _spellRepo.UpdateSpell(spell);
                 _spellRepo.SaveChanges();
-                spellToReturn = _mapper.Map<Spell, SpellResponseDto>(spell);
+                spellToReturn.Data = _mapper.Map<Spell, SpellResponseDto>(spell);
+            }
+            else
+            {
+                spellToReturn.Success = false;
+                spellToReturn.Message = "Unable to update spell.";
             }
 
             return spellToReturn;

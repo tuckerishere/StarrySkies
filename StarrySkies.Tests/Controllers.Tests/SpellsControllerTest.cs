@@ -1,8 +1,10 @@
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using StarrySkies.API.Controllers;
 using StarrySkies.Services.DTOs.SpellDtos;
+using StarrySkies.Services.ResponseModels;
 using StarrySkies.Services.Services.Spells;
 using Xunit;
 
@@ -24,18 +26,18 @@ namespace StarrySkies.Tests.Controllers.Tests
             List<SpellResponseDto> spellList = new List<SpellResponseDto>();
             spellList.Add(spell);
             spellList.Add(spellTwo);
+            var serviceResponse = new ServiceResponse<ICollection<SpellResponseDto>>();
+            serviceResponse.Data = spellList;
 
-            spellService.Setup(x => x.GetAllSpells()).Returns(spellList);
+            spellService.Setup(x => x.GetAllSpells()).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.GetAllSpells();
-            var result = (initialResult.Result as OkObjectResult).Value as List<SpellResponseDto>;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<ICollection<SpellResponseDto>>;
 
             //Assert
-            Assert.Equal(1, result[0].Id);
-            Assert.Equal(2, result[1].Id);
-            Assert.Equal("Zoom", result[0].Name);
+            Assert.Equal(2, result.Data.Count);
         }
 
         [Fact]
@@ -44,16 +46,18 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var spellService = new Mock<ISpellService>();
             List<SpellResponseDto> spellList = new List<SpellResponseDto>();
+            var serviceResponse = new ServiceResponse<ICollection<SpellResponseDto>>();
+            serviceResponse.Data = spellList;
 
-            spellService.Setup(x => x.GetAllSpells()).Returns(spellList);
+            spellService.Setup(x => x.GetAllSpells()).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.GetAllSpells();
-            var result = (initialResult.Result as OkObjectResult).Value as List<SpellResponseDto>;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<ICollection<SpellResponseDto>>;
 
             //Assert
-            Assert.Empty(result);
+            Assert.Equal(0, result.Data.Count);
         }
 
         [Fact]
@@ -62,8 +66,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var spellService = new Mock<ISpellService>();
             List<SpellResponseDto> spellList = new List<SpellResponseDto>();
+            var serviceResponse = new ServiceResponse<ICollection<SpellResponseDto>>();
+            serviceResponse.Data = spellList;
 
-            spellService.Setup(x => x.GetAllSpells()).Returns(spellList);
+            spellService.Setup(x => x.GetAllSpells()).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
@@ -82,17 +88,19 @@ namespace StarrySkies.Tests.Controllers.Tests
             SpellResponseDto spell = new SpellResponseDto();
             spell.Id = 1;
             spell.Name = "Zoom";
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = spell;
 
-            spellService.Setup(x => x.GetSpell(1)).Returns(spell);
+            spellService.Setup(x => x.GetSpell(1)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.GetSpell(1);
-            var result = (initialResult.Result as OkObjectResult).Value as SpellResponseDto;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<SpellResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Zoom", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Zoom", result.Data.Name);
         }
 
         [Fact]
@@ -103,8 +111,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             SpellResponseDto spell = new SpellResponseDto();
             spell.Id = 1;
             spell.Name = "Zoom";
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = spell;
 
-            spellService.Setup(x => x.GetSpell(1)).Returns(spell);
+            spellService.Setup(x => x.GetSpell(1)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
@@ -120,13 +130,15 @@ namespace StarrySkies.Tests.Controllers.Tests
         {
             //Arrange
             var spellService = new Mock<ISpellService>();
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Success = false;
 
-            spellService.Setup(x => x.GetSpell(1));
+            spellService.Setup(x => x.GetSpell(1)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.GetSpell(1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -138,13 +150,16 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var spellService = new Mock<ISpellService>();
             SpellResponseDto spell = new SpellResponseDto();
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = spell;
+            serviceResponse.Success = false;
 
-            spellService.Setup(x => x.GetSpell(1)).Returns(spell);
+            spellService.Setup(x => x.GetSpell(1)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.GetSpell(1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -160,17 +175,19 @@ namespace StarrySkies.Tests.Controllers.Tests
             createdSpell.Name = "Zoom";
             CreateSpellDto createSpell = new CreateSpellDto();
             createSpell.Name = "Zoom";
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = createdSpell;
 
-            spellService.Setup(x => x.CreateSpell(createSpell)).Returns(createdSpell);
+            spellService.Setup(x => x.CreateSpell(createSpell)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.CreateSpell(createSpell);
-            var result = (initialResult.Result as CreatedAtActionResult).Value as SpellResponseDto;
+            var result = (initialResult.Result as CreatedAtActionResult).Value as ServiceResponse<SpellResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Zoom", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Zoom", result.Data.Name);
         }
 
         [Fact]
@@ -183,8 +200,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             createdSpell.Name = "Zoom";
             CreateSpellDto createSpell = new CreateSpellDto();
             createSpell.Name = "Zoom";
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = createdSpell;
 
-            spellService.Setup(x => x.CreateSpell(createSpell)).Returns(createdSpell);
+            spellService.Setup(x => x.CreateSpell(createSpell)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
@@ -240,20 +259,22 @@ namespace StarrySkies.Tests.Controllers.Tests
             SpellResponseDto spellToDelete = new SpellResponseDto();
             spellToDelete.Id = 1;
             spellToDelete.Name = "Frizz";
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = spellToDelete;
 
-            spellService.Setup(x => x.DeleteSpell(1)).Returns(spellToDelete);
+            spellService.Setup(x => x.DeleteSpell(1)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var intialResult = spellController.DeleteSpell(1);
-            var result = (intialResult.Result as OkObjectResult).Value as SpellResponseDto;
+            var result = (intialResult.Result as OkObjectResult).Value as ServiceResponse<SpellResponseDto>;
 
             //Arrange
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Frizz", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Frizz", result.Data.Name);
         }
 
-        
+
         [Fact]
         public void DeleteSpellTestSuccessStatusCode()
         {
@@ -262,8 +283,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             SpellResponseDto spellToDelete = new SpellResponseDto();
             spellToDelete.Id = 1;
             spellToDelete.Name = "Frizz";
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = spellToDelete;
 
-            spellService.Setup(x => x.DeleteSpell(1)).Returns(spellToDelete);
+            spellService.Setup(x => x.DeleteSpell(1)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
@@ -280,12 +303,14 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var spellService = new Mock<ISpellService>();
             SpellResponseDto spell = new SpellResponseDto();
-            spellService.Setup(x => x.GetSpell(1));
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Success = false;
+            spellService.Setup(x => x.DeleteSpell(1)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.DeleteSpell(1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -298,13 +323,16 @@ namespace StarrySkies.Tests.Controllers.Tests
             var spellService = new Mock<ISpellService>();
             SpellResponseDto deletedSpell = new SpellResponseDto();
             deletedSpell.Id = 0;
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = deletedSpell;
+            serviceResponse.Success = false;
 
-            spellService.Setup(x => x.DeleteSpell(1)).Returns(deletedSpell);
+            spellService.Setup(x => x.DeleteSpell(1)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.DeleteSpell(1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -320,17 +348,19 @@ namespace StarrySkies.Tests.Controllers.Tests
             SpellResponseDto spellToReturn = new SpellResponseDto();
             spellToReturn.Name = "Zoom";
             spellToReturn.Id = 1;
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = spellToReturn;
 
-            spellService.Setup(x => x.UpdateSpell(1, updatedSpell)).Returns(spellToReturn);
+            spellService.Setup(x => x.UpdateSpell(1, updatedSpell)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.UpdateSpell(1, updatedSpell);
-            var result = (initialResult.Result as OkObjectResult).Value as SpellResponseDto;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<SpellResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Zoom", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Zoom", result.Data.Name);
         }
 
         [Fact]
@@ -343,8 +373,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             SpellResponseDto spellToReturn = new SpellResponseDto();
             spellToReturn.Name = "Zoom";
             spellToReturn.Id = 1;
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = spellToReturn;
 
-            spellService.Setup(x => x.UpdateSpell(1, updatedSpell)).Returns(spellToReturn);
+            spellService.Setup(x => x.UpdateSpell(1, updatedSpell)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
@@ -397,13 +429,15 @@ namespace StarrySkies.Tests.Controllers.Tests
             var spellService = new Mock<ISpellService>();
             CreateSpellDto updatedSpell = new CreateSpellDto();
             updatedSpell.Name = "Zoom";
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Success = false;
 
-            spellService.Setup(x => x.UpdateSpell(1, updatedSpell));
+            spellService.Setup(x => x.UpdateSpell(1, updatedSpell)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.UpdateSpell(1, updatedSpell);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -418,13 +452,16 @@ namespace StarrySkies.Tests.Controllers.Tests
             updatedSpell.Name = "Zoom";
             SpellResponseDto spellToReturn = new SpellResponseDto();
             spellToReturn.Id = 0;
+            var serviceResponse = new ServiceResponse<SpellResponseDto>();
+            serviceResponse.Data = spellToReturn;
+            serviceResponse.Success = false;
 
-            spellService.Setup(x => x.UpdateSpell(1, updatedSpell)).Returns(spellToReturn);
+            spellService.Setup(x => x.UpdateSpell(1, updatedSpell)).Returns(serviceResponse);
             var spellController = new SpellController(spellService.Object);
 
             //Act
             var initialResult = spellController.UpdateSpell(1, updatedSpell);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
