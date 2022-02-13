@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using StarrySkies.API.Controllers;
 using StarrySkies.Services.DTOs.VocationSpellDtos;
+using StarrySkies.Services.ResponseModels;
 using StarrySkies.Services.Services.VocationSpells;
 using Xunit;
 
@@ -19,8 +20,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             vocationSpellReturn.SpellId = 1;
             vocationSpellReturn.VocationId = 1;
             vocationSpellReturn.LevelLearned = 1;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Data = vocationSpellReturn;
 
-            vocationSpellService.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpellReturn);
+            vocationSpellService.Setup(x => x.GetVocationSpell(1, 1)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
@@ -37,13 +40,15 @@ namespace StarrySkies.Tests.Controllers.Tests
         {
             //Arrange
             var vocationSpellService = new Mock<IVocationSpellService>();
-            vocationSpellService.Setup(x => x.GetVocationSpell(1, 1));
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
+            vocationSpellService.Setup(x => x.GetVocationSpell(1, 1)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
-            var initialResult = vocationSpellController.GetVocationSpell(1,1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var initialResult = vocationSpellController.GetVocationSpell(1, 1);
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -56,13 +61,16 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationSpellService = new Mock<IVocationSpellService>();
             var vsToReturn = new VocationSpellResponseDto();
             vsToReturn.SpellId = 1;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.GetVocationSpell(1, 1)).Returns(vsToReturn);
+
+            vocationSpellService.Setup(x => x.GetVocationSpell(1, 1)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.GetVocationSpell(1, 1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -75,14 +83,16 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationSpellService = new Mock<IVocationSpellService>();
             var vsToReturn = new VocationSpellResponseDto();
             vsToReturn.VocationId = 1;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.GetVocationSpell(1, 1)).Returns(vsToReturn);
+            vocationSpellService.Setup(x => x.GetVocationSpell(1, 1)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.GetVocationSpell(1, 1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -97,19 +107,21 @@ namespace StarrySkies.Tests.Controllers.Tests
             vsToReturn.LevelLearned = 1;
             vsToReturn.SpellId = 2;
             vsToReturn.VocationId = 6;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Data = vsToReturn;
 
-            vocationSpellService.Setup(x => x.GetVocationSpell(6, 1)).Returns(vsToReturn);
+            vocationSpellService.Setup(x => x.GetVocationSpell(6, 1)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.GetVocationSpell(6, 1);
-            var result = (initialResult.Result as OkObjectResult).Value as VocationSpellResponseDto;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<VocationSpellResponseDto>;
 
             //Assert
-            Assert.Equal(6, result.VocationId);
-            Assert.Equal(2, result.SpellId);
-            Assert.Equal(1, result.LevelLearned);
+            Assert.Equal(6, result.Data.VocationId);
+            Assert.Equal(2, result.Data.SpellId);
+            Assert.Equal(1, result.Data.LevelLearned);
         }
 
         [Fact]
@@ -128,8 +140,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             List<VocationSpellResponseDto> vsList = new List<VocationSpellResponseDto>();
             vsList.Add(vocationSpellOne);
             vsList.Add(vocationSpellTwo);
+            var serviceResponse = new ServiceResponse<ICollection<VocationSpellResponseDto>>();
+            serviceResponse.Data = vsList;
 
-            vocationSpellService.Setup(x => x.GetVocationSpells()).Returns(vsList);
+            vocationSpellService.Setup(x => x.GetVocationSpells()).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
@@ -156,16 +170,19 @@ namespace StarrySkies.Tests.Controllers.Tests
             List<VocationSpellResponseDto> vsList = new List<VocationSpellResponseDto>();
             vsList.Add(vocationSpellOne);
             vsList.Add(vocationSpellTwo);
+            var serviceResponse = new ServiceResponse<ICollection<VocationSpellResponseDto>>();
+            serviceResponse.Data = vsList;
 
-            vocationSpellService.Setup(x => x.GetVocationSpells()).Returns(vsList);
+
+            vocationSpellService.Setup(x => x.GetVocationSpells()).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initalResult = vocationSpellController.GetVocationSpells();
-            var result = (initalResult.Result as OkObjectResult).Value as List<VocationSpellResponseDto>;
+            var result = (initalResult.Result as OkObjectResult).Value as ServiceResponse<ICollection<VocationSpellResponseDto>>;
 
             //Assert
-            Assert.Equal(2, result.Count);
+            Assert.Equal(2, result.Data.Count);
         }
 
         [Fact]
@@ -174,15 +191,18 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var vocationSpellService = new Mock<IVocationSpellService>();
             List<VocationSpellResponseDto> vsList = new List<VocationSpellResponseDto>();
-            vocationSpellService.Setup(x => x.GetVocationSpells()).Returns(vsList);
+            var serviceResponse = new ServiceResponse<ICollection<VocationSpellResponseDto>>();
+            serviceResponse.Data = vsList;
+
+            vocationSpellService.Setup(x => x.GetVocationSpells()).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initalResult = vocationSpellController.GetVocationSpells();
-            var result = (initalResult.Result as OkObjectResult).Value as List<VocationSpellResponseDto>;
+            var result = (initalResult.Result as OkObjectResult).Value as ServiceResponse<ICollection<VocationSpellResponseDto>>;
 
             //Assert
-            Assert.Empty(result);
+            Assert.Empty(result.Data);
         }
 
         [Fact]
@@ -191,7 +211,9 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var vocationSpellService = new Mock<IVocationSpellService>();
             List<VocationSpellResponseDto> vsList = new List<VocationSpellResponseDto>();
-            vocationSpellService.Setup(x => x.GetVocationSpells()).Returns(vsList);
+            var serviceResponse = new ServiceResponse<ICollection<VocationSpellResponseDto>>();
+            serviceResponse.Data = vsList;
+            vocationSpellService.Setup(x => x.GetVocationSpells()).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
@@ -199,7 +221,7 @@ namespace StarrySkies.Tests.Controllers.Tests
             var result = (initalResult.Result as OkObjectResult).StatusCode;
 
             //Assert
-            Assert.Equal(200,result);
+            Assert.Equal(200, result);
         }
 
         [Fact]
@@ -215,18 +237,20 @@ namespace StarrySkies.Tests.Controllers.Tests
             vsToReturn.SpellId = 1;
             vsToReturn.VocationId = 1;
             vsToReturn.LevelLearned = 1;
-            vocationSpellService.Setup(x => x.CreateVocationSpell(vsToCreate)).Returns(vsToReturn);
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Data = vsToReturn;
+            vocationSpellService.Setup(x => x.CreateVocationSpell(vsToCreate)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var intialResult = vocationSpellController.CreateVocationSpell(vsToCreate);
-            var result = (intialResult.Result as CreatedAtActionResult).Value as VocationSpellResponseDto;
+            var result = (intialResult.Result as CreatedAtActionResult).Value as ServiceResponse<VocationSpellResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.LevelLearned);
-            Assert.Equal(1, result.SpellId);
-            Assert.Equal(1, result.VocationId);
+            Assert.Equal(1, result.Data.LevelLearned);
+            Assert.Equal(1, result.Data.SpellId);
+            Assert.Equal(1, result.Data.VocationId);
         }
 
         [Fact]
@@ -242,7 +266,9 @@ namespace StarrySkies.Tests.Controllers.Tests
             vsToReturn.SpellId = 1;
             vsToReturn.VocationId = 1;
             vsToReturn.LevelLearned = 1;
-            vocationSpellService.Setup(x => x.CreateVocationSpell(vsToCreate)).Returns(vsToReturn);
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Data = vsToReturn;
+            vocationSpellService.Setup(x => x.CreateVocationSpell(vsToCreate)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
@@ -260,13 +286,15 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var vocationSpellService = new Mock<IVocationSpellService>();
             var vocationSpellDto = new VocationSpellResponseDto();
-            vocationSpellService.Setup(x => x.CreateVocationSpell(vocationSpellDto));
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
+            vocationSpellService.Setup(x => x.CreateVocationSpell(vocationSpellDto)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.CreateVocationSpell(vocationSpellDto);
-            var result = (initialResult.Result as BadRequestResult).StatusCode;
+            var result = (initialResult.Result as BadRequestObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(400, result);
@@ -280,14 +308,16 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationSpellDto = new VocationSpellResponseDto();
             vocationSpellDto.VocationId = 1;
             vocationSpellDto.LevelLearned = 2;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.CreateVocationSpell(vocationSpellDto)).Returns(vocationSpellDto);
+            vocationSpellService.Setup(x => x.CreateVocationSpell(vocationSpellDto)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var intialResult = vocationSpellController.CreateVocationSpell(vocationSpellDto);
-            var result = (intialResult.Result as BadRequestResult).StatusCode;
+            var result = (intialResult.Result as BadRequestObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(400, result);
@@ -301,14 +331,16 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationSpellDto = new VocationSpellResponseDto();
             vocationSpellDto.SpellId = 1;
             vocationSpellDto.LevelLearned = 2;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.CreateVocationSpell(vocationSpellDto)).Returns(vocationSpellDto);
+            vocationSpellService.Setup(x => x.CreateVocationSpell(vocationSpellDto)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var intialResult = vocationSpellController.CreateVocationSpell(vocationSpellDto);
-            var result = (intialResult.Result as BadRequestResult).StatusCode;
+            var result = (intialResult.Result as BadRequestObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(400, result);
@@ -323,18 +355,20 @@ namespace StarrySkies.Tests.Controllers.Tests
             vocationSpellDto.LevelLearned = 1;
             vocationSpellDto.SpellId = 1;
             vocationSpellDto.VocationId = 1;
-            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(vocationSpellDto);
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Data = vocationSpellDto;
+            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(serviceResponse);
 
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.DeleteVocationSpell(1, 1);
-            var result = (initialResult.Result as OkObjectResult).Value as VocationSpellResponseDto;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<VocationSpellResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.LevelLearned);
-            Assert.Equal(1, result.SpellId);
-            Assert.Equal(1, result.VocationId);
+            Assert.Equal(1, result.Data.LevelLearned);
+            Assert.Equal(1, result.Data.SpellId);
+            Assert.Equal(1, result.Data.VocationId);
         }
 
         [Fact]
@@ -346,7 +380,9 @@ namespace StarrySkies.Tests.Controllers.Tests
             vocationSpellDto.VocationId = 1;
             vocationSpellDto.LevelLearned = 1;
             vocationSpellDto.SpellId = 1;
-            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(vocationSpellDto);
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Data = vocationSpellDto;
+            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
@@ -362,16 +398,15 @@ namespace StarrySkies.Tests.Controllers.Tests
         {
             //Arrange
             var vocationSpellService = new Mock<IVocationSpellService>();
-            var vocationSpellDto = new VocationSpellResponseDto();
-            vocationSpellDto.SpellId = 1;
-            vocationSpellDto.VocationId = 0;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(vocationSpellDto);
+            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.DeleteVocationSpell(1, 1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -382,16 +417,15 @@ namespace StarrySkies.Tests.Controllers.Tests
         {
             //Arrange
             var vocationSpellService = new Mock<IVocationSpellService>();
-            var vocationSpellDto = new VocationSpellResponseDto();
-            vocationSpellDto.SpellId = 0;
-            vocationSpellDto.VocationId = 1;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(vocationSpellDto);
+            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.DeleteVocationSpell(1, 1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -402,17 +436,18 @@ namespace StarrySkies.Tests.Controllers.Tests
         {
             //Arrange
             var vocationSpellService = new Mock<IVocationSpellService>();
-            var vocationSpellDto = new VocationSpellResponseDto();
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1));
+            vocationSpellService.Setup(x => x.DeleteVocationSpell(1, 1)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.DeleteVocationSpell(1, 1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
-            Assert.Equal(404,result);
+            Assert.Equal(404, result);
         }
 
         [Fact]
@@ -424,18 +459,20 @@ namespace StarrySkies.Tests.Controllers.Tests
             vocationSpellDto.SpellId = 2;
             vocationSpellDto.VocationId = 2;
             vocationSpellDto.LevelLearned = 2;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Data = vocationSpellDto;
 
-            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(vocationSpellDto);
+            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.UpdateVocationSpell(1, 1, vocationSpellDto);
-            var result = (initialResult.Result as OkObjectResult).Value as VocationSpellResponseDto;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<VocationSpellResponseDto>;
 
             //Assert
-            Assert.Equal(2, result.LevelLearned);
-            Assert.Equal(2, result.SpellId);
-            Assert.Equal(2, result.VocationId);
+            Assert.Equal(2, result.Data.LevelLearned);
+            Assert.Equal(2, result.Data.SpellId);
+            Assert.Equal(2, result.Data.VocationId);
         }
 
         [Fact]
@@ -447,8 +484,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             vocationSpellDto.SpellId = 2;
             vocationSpellDto.VocationId = 2;
             vocationSpellDto.LevelLearned = 2;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Data = vocationSpellDto;
 
-            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(vocationSpellDto);
+            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
@@ -468,16 +507,15 @@ namespace StarrySkies.Tests.Controllers.Tests
             vocationSpellDto.LevelLearned = 2;
             vocationSpellDto.VocationId = 2;
             vocationSpellDto.SpellId = 2;
-            var vsToReturn = new VocationSpellResponseDto();
-            vsToReturn.VocationId = 0;
-            vsToReturn.SpellId = 1;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(vsToReturn);
+            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.UpdateVocationSpell(1, 1, vocationSpellDto);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -492,16 +530,15 @@ namespace StarrySkies.Tests.Controllers.Tests
             vocationSpellDto.LevelLearned = 2;
             vocationSpellDto.VocationId = 2;
             vocationSpellDto.SpellId = 2;
-            var vsToReturn = new VocationSpellResponseDto();
-            vsToReturn.VocationId = 1;
-            vsToReturn.SpellId = 0;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(vsToReturn);
+            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.UpdateVocationSpell(1, 1, vocationSpellDto);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -516,13 +553,15 @@ namespace StarrySkies.Tests.Controllers.Tests
             vocationSpellDto.LevelLearned = 2;
             vocationSpellDto.VocationId = 2;
             vocationSpellDto.SpellId = 2;
+            var serviceResponse = new ServiceResponse<VocationSpellResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto));
+            vocationSpellService.Setup(x => x.UpdateVocationSpell(1, 1, vocationSpellDto)).Returns(serviceResponse);
             var vocationSpellController = new VocationSpellController(vocationSpellService.Object);
 
             //Act
             var initialResult = vocationSpellController.UpdateVocationSpell(1, 1, vocationSpellDto);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);

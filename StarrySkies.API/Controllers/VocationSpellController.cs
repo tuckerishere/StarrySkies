@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using StarrySkies.Services.DTOs.VocationSpellDtos;
+using StarrySkies.Services.ResponseModels;
 using StarrySkies.Services.Services.VocationSpells;
 
 namespace StarrySkies.API.Controllers
@@ -18,58 +19,57 @@ namespace StarrySkies.API.Controllers
         [HttpGet("{vocationId}/vocation/{spellId}/spell", Name = "GetVocationSpell")]
         [ProducesResponseType(200, Type = typeof(VocationSpellResponseDto))]
         [ProducesResponseType(400)]
-        public ActionResult<VocationSpellResponseDto> GetVocationSpell(int vocationId, int spellId)
+        public ActionResult<ServiceResponse<VocationSpellResponseDto>> GetVocationSpell(int vocationId, int spellId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            VocationSpellResponseDto vsToReturn = _vocationSpellService.GetVocationSpell(vocationId, spellId);
+            var vsToReturn = _vocationSpellService.GetVocationSpell(vocationId, spellId);
 
-            if (vsToReturn == null || vsToReturn?.VocationId == 0 || vsToReturn?.SpellId == 0)
+            if (!vsToReturn.Success)
             {
-                return NotFound();
+                return NotFound(vsToReturn);
             }
 
             return Ok(vsToReturn);
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(List<VocationSpellResponseDto>))]
-        public ActionResult<List<VocationSpellResponseDto>> GetVocationSpells()
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<List<VocationSpellResponseDto>>))]
+        public ActionResult<ServiceResponse<VocationSpellResponseDto>> GetVocationSpells()
         {
             var vocationSpells = _vocationSpellService.GetVocationSpells();
             return Ok(vocationSpells);
         }
 
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(VocationSpellResponseDto))]
+        [ProducesResponseType(201, Type = typeof(ServiceResponse<VocationSpellResponseDto>))]
         [ProducesResponseType(400)]
-        public ActionResult<VocationSpellResponseDto> CreateVocationSpell(VocationSpellResponseDto createVocationSpell)
+        public ActionResult<ServiceResponse<VocationSpellResponseDto>> CreateVocationSpell(VocationSpellResponseDto createVocationSpell)
         {
-            VocationSpellResponseDto vsToReturn = new VocationSpellResponseDto();
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            vsToReturn = _vocationSpellService.CreateVocationSpell(createVocationSpell);
+            var vsToReturn = _vocationSpellService.CreateVocationSpell(createVocationSpell);
 
-            if (vsToReturn?.VocationId == 0 || vsToReturn?.SpellId == 0 || vsToReturn == null)
+            if (!vsToReturn.Success)
             {
-                return BadRequest();
+                return BadRequest(vsToReturn);
             }
 
-            return CreatedAtAction(nameof(GetVocationSpell), new { vocationId = vsToReturn.VocationId, spellId = vsToReturn.SpellId }
-                , createVocationSpell);
+            return CreatedAtAction(nameof(GetVocationSpell), new { vocationId = vsToReturn.Data.VocationId, spellId = vsToReturn.Data.SpellId }
+                , vsToReturn);
         }
 
         [HttpDelete("{vocationId}/vocation/{spellId}/spell")]
-        [ProducesResponseType(200, Type = typeof(VocationSpellResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<VocationSpellResponseDto>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<VocationSpellResponseDto> DeleteVocationSpell(int vocationId, int spellId)
+        public ActionResult<ServiceResponse<VocationSpellResponseDto>> DeleteVocationSpell(int vocationId, int spellId)
         {
             if (!ModelState.IsValid)
             {
@@ -78,19 +78,19 @@ namespace StarrySkies.API.Controllers
 
             var vsToReturn = _vocationSpellService.DeleteVocationSpell(vocationId, spellId);
 
-            if (vsToReturn == null || vsToReturn?.SpellId == 0 || vsToReturn?.VocationId == 0)
+            if (!vsToReturn.Success)
             {
-                return NotFound();
+                return NotFound(vsToReturn);
             }
 
             return Ok(vsToReturn);
         }
 
         [HttpPut("{vocationId}/vocation/{spellId}/spell")]
-        [ProducesResponseType(200, Type = typeof(VocationSpellResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<VocationSpellResponseDto>))]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
-        public ActionResult<VocationSpellResponseDto> UpdateVocationSpell(int vocationId, int spellId,
+        public ActionResult<ServiceResponse<VocationSpellResponseDto>> UpdateVocationSpell(int vocationId, int spellId,
             VocationSpellResponseDto updatedVocationSpell)
         {
             if (!ModelState.IsValid)
@@ -100,9 +100,9 @@ namespace StarrySkies.API.Controllers
 
             var vsToUpdate = _vocationSpellService.UpdateVocationSpell(vocationId, spellId, updatedVocationSpell);
 
-            if (vsToUpdate == null || vsToUpdate?.VocationId == 0 || vsToUpdate.SpellId == 0)
+            if (!vsToUpdate.Success)
             {
-                return NotFound();
+                return NotFound(vsToUpdate);
             }
 
             return Ok(vsToUpdate);

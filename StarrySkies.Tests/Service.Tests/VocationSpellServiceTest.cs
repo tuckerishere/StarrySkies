@@ -94,9 +94,9 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.GetVocationSpell(1, 1);
 
             //Assert
-            Assert.Equal(1, result.VocationId);
-            Assert.Equal(1, result.SpellId);
-            Assert.Equal(1, result.LevelLearned);
+            Assert.Equal(1, result.Data.VocationId);
+            Assert.Equal(1, result.Data.SpellId);
+            Assert.Equal(1, result.Data.LevelLearned);
         }
 
         [Fact]
@@ -109,16 +109,14 @@ namespace StarrySkies.Tests.Service.Tests
 
             VocationSpell vocationSpell = new VocationSpell();
 
-            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1));
             var vocationService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
 
             //Act
             var result = vocationService.GetVocationSpell(1, 1);
 
             //Assert
-            Assert.Equal(0, result.SpellId);
-            Assert.Equal(0, result.VocationId);
-            Assert.Equal(0, result.LevelLearned);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -136,9 +134,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.GetVocationSpell(1, 1);
 
             //Assert
-            Assert.Equal(0, result.LevelLearned);
-            Assert.Equal(0, result.SpellId);
-            Assert.Equal(0, result.VocationId);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -162,7 +158,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.GetVocationSpells();
 
             //Assert
-            Assert.Equal(2, result.Count);
+            Assert.Equal(2, result.Data.Count);
         }
 
         [Fact]
@@ -180,7 +176,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationSpellService.GetVocationSpells();
 
             //Assert
-            Assert.Empty(result);
+            Assert.Empty(result.Data);
         }
 
         [Fact]
@@ -206,9 +202,9 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationSpellService.CreateVocationSpell(vocationSpellDtoCreate);
 
             //Assert
-            Assert.Equal(1, result.VocationId);
-            Assert.Equal(1, result.SpellId);
-            Assert.Equal(1, result.LevelLearned);
+            Assert.Equal(1, result.Data.VocationId);
+            Assert.Equal(1, result.Data.SpellId);
+            Assert.Equal(1, result.Data.LevelLearned);
         }
 
         [Fact]
@@ -219,13 +215,12 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationRepo = new Mock<IVocationRepo>();
             var spellRepo = new Mock<ISpellRepo>();
             var vocationSpell = CreateTestVocationSpell(1, "Test");
-            var spell = CreateTestSpell(1, "Test");
             var vocation = CreateTestVocation(1, "Test");
             var vocationSpellDtoCreate = CreateTestVocationSpellResponseDto(1);
 
             vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
             vocationRepo.Setup(x => x.GetVocationById(1)).Returns(vocation);
-            spellRepo.Setup(x => x.GetSpell(1)).Returns(spell);
+            spellRepo.Setup(x => x.GetSpell(1));
 
             var vocationService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
 
@@ -233,9 +228,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationService.CreateVocationSpell(vocationSpellDtoCreate);
 
             //Assert
-            Assert.Equal(0, result.VocationId);
-            Assert.Equal(0, result.SpellId);
-            Assert.Equal(0, result.LevelLearned);
+            Assert.Null(result.Data);
             vocationSpellRepo.Verify(x => x.CreateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
         }
 
@@ -246,12 +239,11 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationSpellRepo = new Mock<IVocationSpellRepo>();
             var vocationRepo = new Mock<IVocationRepo>();
             var spellRepo = new Mock<ISpellRepo>();
-            var vocation = CreateTestVocation(1, "Test");
             var vocationSpell = CreateTestVocationSpell(1, "Test");
             var vocationSpellResponseDto = CreateTestVocationSpellResponseDto(1);
 
             vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1));
-            vocationRepo.Setup(x => x.GetVocationById(1)).Returns(vocation);
+            vocationRepo.Setup(x => x.GetVocationById(1));
             spellRepo.Setup(x => x.GetSpell(1));
 
             var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
@@ -260,9 +252,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationSpellService.CreateVocationSpell(vocationSpellResponseDto);
 
             //Assert
-            Assert.Equal(0, result.LevelLearned);
-            Assert.Equal(0, result.SpellId);
-            Assert.Equal(0, result.VocationId);
+            Assert.Null(result.Data);
             vocationSpellRepo.Verify(x => x.CreateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
         }
 
@@ -287,9 +277,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationSpellService.CreateVocationSpell(createVocationSpellDto);
 
             //Assert
-            Assert.Equal(0, result.LevelLearned);
-            Assert.Equal(0, result.SpellId);
-            Assert.Equal(0, result.VocationId);
+            Assert.Null(result.Data);
             vocationSpellRepo.Verify(x => x.CreateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
         }
 
@@ -307,7 +295,6 @@ namespace StarrySkies.Tests.Service.Tests
             var updatedVocationSpellDto = CreateTestVocationSpellResponseDto(2);
 
             vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
-            //vocationSpellRepo.Setup(x=>x.GetVocationSpell(2,2)).Returns()
             vocationRepo.Setup(x => x.GetVocationById(2)).Returns(vocation);
             spellRepo.Setup(x => x.GetSpell(2)).Returns(spell);
             vocationSpellRepo.Setup(x => x.UpdateVocationSpell(updatedVocationSpell));
@@ -319,9 +306,9 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationSpellService.UpdateVocationSpell(1, 1, updatedVocationSpellDto);
 
             //Assert
-            Assert.Equal(2, result.VocationId);
-            Assert.Equal(2, result.SpellId);
-            Assert.Equal(2, result.LevelLearned);
+            Assert.Equal(2, result.Data.VocationId);
+            Assert.Equal(2, result.Data.SpellId);
+            Assert.Equal(2, result.Data.LevelLearned);
             vocationSpellRepo.Verify(x => x.UpdateVocationSpell(It.IsAny<VocationSpell>()), Times.Once);
             vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Once);
         }
@@ -351,9 +338,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationSpellService.UpdateVocationSpell(1, 1, updatedVocationSpellDto);
 
             //Assert
-            Assert.Equal(0, result.VocationId);
-            Assert.Equal(0, result.SpellId);
-            Assert.Equal(0, result.LevelLearned);
+            Assert.Null(result.Data);
+            Assert.False(result.Success);
             vocationSpellRepo.Verify(x => x.CreateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
             vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
         }
@@ -377,9 +363,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationSpellService.UpdateVocationSpell(1, 1, updatedVocationSpellDto);
 
             //Assert
-            Assert.Equal(0, result.SpellId);
-            Assert.Equal(0, result.VocationId);
-            Assert.Equal(0, result.LevelLearned);
+            Assert.Null(result.Data);
             vocationSpellRepo.Verify(x => x.CreateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
             vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
         }
@@ -408,9 +392,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = vocationSpellService.UpdateVocationSpell(1, 1, updatedVocation);
 
             //Assert
-            Assert.Equal(0, result.SpellId);
-            Assert.Equal(0, result.VocationId);
-            Assert.Equal(0, result.LevelLearned);
+            Assert.Null(result.Data);
             vocationSpellRepo.Verify(x => x.UpdateVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
             vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
         }
@@ -425,19 +407,19 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationSpell = CreateTestVocationSpell(1, "VocationSpell");
             var vocationSpellToDelete = CreateTestVocationSpellResponseDto(1);
 
-            vocationSpellRepo.Setup(x => x.GetVocationSpell(1,1)).Returns(vocationSpell);
+            vocationSpellRepo.Setup(x => x.GetVocationSpell(1, 1)).Returns(vocationSpell);
             vocationSpellRepo.Setup(x => x.DeleteVocationSpell(vocationSpell));
             vocationSpellRepo.Setup(x => x.SaveChanges()).Returns(true);
 
             var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
 
             //Act
-            var result = vocationSpellService.DeleteVocationSpell(1,1);
+            var result = vocationSpellService.DeleteVocationSpell(1, 1);
 
             //Assert
-            Assert.Equal(1, result.SpellId);
-            Assert.Equal(1, result.LevelLearned);
-            Assert.Equal(1, result.VocationId);
+            Assert.Equal(1, result.Data.SpellId);
+            Assert.Equal(1, result.Data.LevelLearned);
+            Assert.Equal(1, result.Data.VocationId);
             vocationSpellRepo.Verify(x => x.DeleteVocationSpell(It.IsAny<VocationSpell>()), Times.Once);
             vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Once);
         }
@@ -456,12 +438,10 @@ namespace StarrySkies.Tests.Service.Tests
             var vocationSpellService = new VocationSpellService(vocationSpellRepo.Object, vocationRepo.Object, spellRepo.Object, _mapper);
 
             //Act
-            var result = vocationSpellService.DeleteVocationSpell(1,1);
+            var result = vocationSpellService.DeleteVocationSpell(1, 1);
 
             //Assert
-            Assert.Equal(0, result.LevelLearned);
-            Assert.Equal(0, result.VocationId);
-            Assert.Equal(0, result.SpellId);
+            Assert.Null(result.Data);
             vocationSpellRepo.Verify(x => x.DeleteVocationSpell(It.IsAny<VocationSpell>()), Times.Never);
             vocationSpellRepo.Verify(x => x.SaveChanges(), Times.Never);
         }
