@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using StarrySkies.Services.DTOs.VocationDtos;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Services.Services.Vocations
 {
     public interface IVocationService
     {
-        ICollection<VocationResponseDto> GetVocations();
-        VocationResponseDto GetVocationById(int id);
-        VocationResponseDto DeleteVocation(int id);
-        VocationResponseDto CreateVocation(CreateVocationDto vocation);
-        VocationResponseDto UpdateVocation(int id, CreateVocationDto vocation);
+        ServiceResponse<ICollection<VocationResponseDto>> GetVocations();
+        ServiceResponse<VocationResponseDto> GetVocationById(int id);
+        ServiceResponse<VocationResponseDto> DeleteVocation(int id);
+        ServiceResponse<VocationResponseDto> CreateVocation(CreateVocationDto vocation);
+        ServiceResponse<VocationResponseDto> UpdateVocation(int id, CreateVocationDto vocation);
     }
 }

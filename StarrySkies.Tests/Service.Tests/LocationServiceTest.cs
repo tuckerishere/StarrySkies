@@ -52,8 +52,8 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.CreateLocation(locationToCreate);
 
             //Assert
-            Assert.Equal("Test", results.Name);
-            Assert.Equal("Testing", results.Description);
+            Assert.Equal("Test", results.Data.Name);
+            Assert.Equal("Testing", results.Data.Description);
         }
 
         [Fact]
@@ -73,9 +73,9 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.GetLocation(1);
 
             //Assert
-            Assert.Equal(1, results.Id);
-            Assert.Equal("Home", results.Name);
-            Assert.Equal("Comfy", results.Description);
+            Assert.Equal(1, results.Data.Id);
+            Assert.Equal("Home", results.Data.Name);
+            Assert.Equal("Comfy", results.Data.Description);
         }
         [Fact]
         public void GetLocationNullTest()
@@ -94,9 +94,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.GetLocation(2);
 
             //Assert
-            Assert.Equal(0, results.Id);
-            Assert.Null(results.Name);
-            Assert.Null(results.Description);
+            Assert.Null(results.Data);
         }
 
         [Fact]
@@ -123,9 +121,9 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.GetAllLocations();
 
             //Assert
-            Assert.Equal(1, results.ElementAt(0).Id);
-            Assert.Equal(2, results.ElementAt(1).Id);
-            Assert.Equal(2, results.Count());
+            Assert.Equal(1, results.Data.ElementAt(0).Id);
+            Assert.Equal(2, results.Data.ElementAt(1).Id);
+            Assert.Equal(2, results.Data.Count());
         }
 
         [Fact]
@@ -142,7 +140,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.GetAllLocations();
 
             //Assert
-            Assert.Empty(results);
+            Assert.Empty(results.Data);
         }
 
         [Fact]
@@ -160,8 +158,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.GetLocation(1);
 
             //Assert
-            Assert.Null(results.Name);
-            Assert.Equal(0, results.Id);
+            Assert.Null(results.Data);
         }
 
         [Fact]
@@ -179,7 +176,7 @@ namespace StarrySkies.Tests.Service.Tests
             //Act
             var results = locationService.CreateLocation(createdLocation);
 
-            //Arrange
+            //Assert
             locationRepo.Verify(l => l.CreateLocation(It.IsAny<Location>()), Times.Never);
         }
 
@@ -203,8 +200,8 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.DeleteLocation(location.Id);
 
             //Assert
-            Assert.Equal(1, results.Id);
-            Assert.Equal("Test", results.Name);
+            Assert.Equal(1, results.Data.Id);
+            Assert.Equal("Test", results.Data.Name);
             locationRepo.Verify(l => l.DeleteLocation(It.IsAny<Location>()), Times.Once);
         }
 
@@ -213,12 +210,8 @@ namespace StarrySkies.Tests.Service.Tests
         {
             //Assert
             var locationRepo = new Mock<ILocationRepository>();
-            Location location = new Location();
-            location.Id = 0;
-            location.Name = null;
-            location.Description = null;
 
-            locationRepo.Setup(x => x.GetLocationById(2)).Returns(location);
+            locationRepo.Setup(x => x.GetLocationById(2));
 
             var locationService = new LocationService(locationRepo.Object, _mapper);
 
@@ -226,8 +219,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.DeleteLocation(2);
 
             //Assert
-            Assert.Equal(0, results.Id);
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
             locationRepo.Verify(l => l.DeleteLocation(It.IsAny<Location>()), Times.Never);
         }
 
@@ -253,9 +245,9 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.UpdateLocation(1, updatedLocation);
 
             //Assert
-            Assert.Equal(1, results.Id);
-            Assert.Equal("Bat Cave", results.Name);
-            Assert.Equal("Secret", results.Description);
+            Assert.Equal(1, results.Data.Id);
+            Assert.Equal("Bat Cave", results.Data.Name);
+            Assert.Equal("Secret", results.Data.Description);
             locationRepo.Verify(x => x.UpdateLocation(It.IsAny<Location>()), Times.Once);
         }
 
@@ -279,8 +271,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.UpdateLocation(2, updatedLocation);
 
             //Assert
-            Assert.Equal(0, results.Id);
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
             locationRepo.Verify(x => x.UpdateLocation(It.IsAny<Location>()), Times.Never);
         }
 
@@ -305,8 +296,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = locationService.UpdateLocation(1, updatedLocation);
 
             //Assert
-            Assert.Equal(0, results.Id);
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
             locationRepo.Verify(x => x.UpdateLocation(It.IsAny<Location>()), Times.Never);
         }
     }

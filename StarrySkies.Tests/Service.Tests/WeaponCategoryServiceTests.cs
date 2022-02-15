@@ -45,7 +45,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.CreateWeaponCategory(createdCategoryDto);
 
             //Arrange
-            Assert.Equal("Axe", results.Name);
+            Assert.Equal("Axe", results.Data.Name);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.CreateWeaponCategory(createWeapon);
 
             //Assert
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
         }
 
         [Fact]
@@ -85,7 +85,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.CreateWeaponCategory(categoryToCreate);
 
             //Arrange
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
         }
 
         [Fact]
@@ -107,8 +107,8 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.DeleteWeaponCategory(1);
 
             //Assert
-            Assert.Equal(1, results.Id);
-            Assert.Equal("Axe", results.Name);
+            Assert.Equal(1, results.Data.Id);
+            Assert.Equal("Axe", results.Data.Name);
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.DeleteWeaponCategory(1);
 
             //Assert
-            Assert.Equal(0,results.Id);
+            Assert.Null(results.Data);
         }
 
         [Fact]
@@ -149,7 +149,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.GetWeaponCategories();
 
             //Assert
-            Assert.Equal(2, results.Count);
+            Assert.Equal(2, results.Data.Count);
         }
 
         [Fact]
@@ -166,7 +166,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.GetWeaponCategories();
 
             //Assert
-            Assert.Empty(results);
+            Assert.Empty(results.Data);
         }
 
         [Fact]
@@ -185,8 +185,8 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.GetWeaponCategoryById(1);
 
             //Assert
-            Assert.Equal(1, results.Id);
-            Assert.Equal("Axe", results.Name);
+            Assert.Equal(1, results.Data.Id);
+            Assert.Equal("Axe", results.Data.Name);
         }
 
         [Fact]
@@ -201,8 +201,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.GetWeaponCategoryById(1);
 
             //Arrange
-            Assert.Equal(0, results.Id);
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
         }
 
         [Fact]
@@ -224,7 +223,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.UpdateWeaponCategory(1, updatedName);
 
             //Assert
-            Assert.Equal("Lance", results.Name);
+            Assert.Equal("Lance", results.Data.Name);
         }
 
         [Fact]
@@ -245,7 +244,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.UpdateWeaponCategory(1, updateName);
 
             //Assert
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
         }
         [Fact]
         public void UpdateNameWithIdNotExisting()
@@ -265,7 +264,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.UpdateWeaponCategory(1, updateName);
 
             //Assert
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
         }
 
         [Fact]
@@ -286,7 +285,7 @@ namespace StarrySkies.Tests.Service.Tests
             var results = categoryService.UpdateWeaponCategory(1, updateName);
 
             //Assert
-            Assert.Null(results.Name);
+            Assert.Null(results.Data);
         }
     }
 }

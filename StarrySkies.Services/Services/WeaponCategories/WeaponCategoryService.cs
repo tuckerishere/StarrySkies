@@ -6,6 +6,7 @@ using AutoMapper;
 using StarrySkies.Data.Models;
 using StarrySkies.Data.Repositories.WeaponCategoryRepo;
 using StarrySkies.Services.DTOs.WeaponCategoryDTOs;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Services.Services.WeaponCategories
 {
@@ -19,71 +20,90 @@ namespace StarrySkies.Services.Services.WeaponCategories
             _mapper = mapper;
             _weaponCategoryRepo = weaponCategoryRepo;
         }
-        public WeaponCategoryResponseDto CreateWeaponCategory(CreateWeaponCategoryDto weaponCategory)
+        public ServiceResponse<WeaponCategoryResponseDto> CreateWeaponCategory(CreateWeaponCategoryDto weaponCategory)
         {
-            WeaponCategoryResponseDto categoryResponseDto = new WeaponCategoryResponseDto();
+            ServiceResponse<WeaponCategoryResponseDto> categoryResponseDto = new ServiceResponse<WeaponCategoryResponseDto>();
             WeaponCategory categoryToCreate = _mapper.Map<CreateWeaponCategoryDto, WeaponCategory>(weaponCategory);
             if (categoryToCreate.Name != null && categoryToCreate.Name.Trim() != "")
             {
                 _weaponCategoryRepo.CreateWeaponCategory(categoryToCreate);
                 _weaponCategoryRepo.SaveChanges();
-                categoryResponseDto = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(categoryToCreate);
+                categoryResponseDto.Data = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(categoryToCreate);
+            }
+            else
+            {
+                categoryResponseDto.Success = false;
+                categoryResponseDto.Message = "Missing Weapon Category Name.";
             }
 
             return categoryResponseDto;
         }
 
-        public WeaponCategoryResponseDto DeleteWeaponCategory(int id)
+        public ServiceResponse<WeaponCategoryResponseDto> DeleteWeaponCategory(int id)
         {
-            WeaponCategoryResponseDto categoryResponseDto = new WeaponCategoryResponseDto();
+            ServiceResponse<WeaponCategoryResponseDto> categoryResponseDto = new ServiceResponse<WeaponCategoryResponseDto>();
             WeaponCategory categoryToDelete = _weaponCategoryRepo.GetWeaponCategoryById(id);
-            if (categoryToDelete != null && categoryToDelete.Id != 0)
+            if (categoryToDelete != null)
             {
                 _weaponCategoryRepo.DeleteWeaponCategory(categoryToDelete);
                 _weaponCategoryRepo.SaveChanges();
-                categoryResponseDto = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(categoryToDelete);
+                categoryResponseDto.Data = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(categoryToDelete);
+            }
+            else
+            {
+                categoryResponseDto.Message = "Weapon Category Not Found.";
+                categoryResponseDto.Success = false;
             }
 
             return categoryResponseDto;
         }
 
-        public ICollection<WeaponCategoryResponseDto> GetWeaponCategories()
+        public ServiceResponse<ICollection<WeaponCategoryResponseDto>> GetWeaponCategories()
         {
-            ICollection<WeaponCategoryResponseDto> categoryResponse = new List<WeaponCategoryResponseDto>();
+            ServiceResponse<ICollection<WeaponCategoryResponseDto>> categoryResponse = new ServiceResponse<ICollection<WeaponCategoryResponseDto>>();
             ICollection<WeaponCategory> allCategroies = _weaponCategoryRepo.GetAllWeaponCategories();
-            categoryResponse = _mapper.Map<ICollection<WeaponCategory>, ICollection<WeaponCategoryResponseDto>>(allCategroies);
+            categoryResponse.Data = _mapper.Map<ICollection<WeaponCategory>, ICollection<WeaponCategoryResponseDto>>(allCategroies);
 
             return categoryResponse;
         }
 
-        public WeaponCategoryResponseDto GetWeaponCategoryById(int id)
+        public ServiceResponse<WeaponCategoryResponseDto> GetWeaponCategoryById(int id)
         {
-            WeaponCategoryResponseDto categoryResponse = new WeaponCategoryResponseDto();
+            ServiceResponse<WeaponCategoryResponseDto> categoryResponse = new ServiceResponse<WeaponCategoryResponseDto>();
             WeaponCategory category = _weaponCategoryRepo.GetWeaponCategoryById(id);
             if (category != null)
             {
-                if (category.Id != 0)
-                {
-                    categoryResponse = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(category);
-                }
+                    categoryResponse.Data = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(category);
+            }
+            else
+            {
+                categoryResponse.Success = false;
+                categoryResponse.Message = "Weapon Category Not Found.";
             }
 
             return categoryResponse;
         }
 
-        public WeaponCategoryResponseDto UpdateWeaponCategory(int id, CreateWeaponCategoryDto weaponCategoryDto)
+        public ServiceResponse<WeaponCategoryResponseDto> UpdateWeaponCategory(int id, CreateWeaponCategoryDto weaponCategoryDto)
         {
-            WeaponCategoryResponseDto categoryResponse = new WeaponCategoryResponseDto();
+            ServiceResponse<WeaponCategoryResponseDto> categoryResponse = new ServiceResponse<WeaponCategoryResponseDto>();
             WeaponCategory categoryToUpdate = _weaponCategoryRepo.GetWeaponCategoryById(id);
-            if (categoryToUpdate != null
-                && weaponCategoryDto.Name != null
-                && weaponCategoryDto.Name.Trim() != "")
+            if(categoryToUpdate == null)
+            {
+                categoryResponse.Success = false;
+                categoryResponse.Message = "Weapon Category Not Found.";
+            }
+            if(weaponCategoryDto.Name == null || weaponCategoryDto.Name.Trim() == "")
+            {
+                categoryResponse.Success = false;
+                categoryResponse.Message = "Please enter name for Weapon Category.";
+            }
+            else
             {
                 categoryToUpdate.Name = weaponCategoryDto.Name;
                 _weaponCategoryRepo.UpdateWeaponCategory(categoryToUpdate);
                 _weaponCategoryRepo.SaveChanges();
-                categoryResponse = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(categoryToUpdate);
-
+                categoryResponse.Data = _mapper.Map<WeaponCategory, WeaponCategoryResponseDto>(categoryToUpdate);
             }
 
             return categoryResponse;

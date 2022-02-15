@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using StarrySkies.Data.Data;
 using StarrySkies.Data.Models;
 
@@ -24,12 +25,12 @@ namespace StarrySkies.Data.Repositories.SpellRepo
 
         public Spell GetSpell(int id)
         {
-            return _context.Spells.Find(id);
+            return _context.Spells.Include(vs=>vs.VocationsSpells).ThenInclude(v=>v.Vocation).FirstOrDefault(s=>s.Id == id);
         }
 
         public ICollection<Spell> GetSpells()
         {
-            return _context.Spells.OrderBy(x => x.Name).ToList();
+            return _context.Spells.OrderBy(x => x.Name).Include(vs=>vs.VocationsSpells).ThenInclude(v=>v.Vocation).ToList();
         }
 
         public bool SaveChanges()

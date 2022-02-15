@@ -4,6 +4,7 @@ using StarrySkies.Data.Models;
 using StarrySkies.Data.Repositories.SpellRepo;
 using StarrySkies.Services.DTOs.SpellDtos;
 using StarrySkies.Services.Mapping;
+using StarrySkies.Services.ResponseModels;
 using StarrySkies.Services.Services.Spells;
 using Xunit;
 
@@ -52,15 +53,15 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.CreateSpell(spellDto);
 
             //Assert
-            Assert.Equal("Zoom", result.Name);
-            Assert.Equal("Test", result.Description);
-            Assert.Equal(2, result.MPCost);
-            Assert.Equal("Ally", result.SpellTarget);
+            Assert.Equal("Zoom", result.Data.Name);
+            Assert.Equal("Test", result.Data.Description);
+            Assert.Equal(2, result.Data.MPCost);
+            Assert.Equal("Ally", result.Data.SpellTarget);
             spellRepo.Verify(x => x.CreateSpell(It.IsAny<Spell>()), Times.Once);
             spellRepo.Verify(x => x.SaveChanges(), Times.Once);
-        } 
+        }
         [Fact]
-         public void CreateSpellSuccessMpInRangeTest()
+        public void CreateSpellSuccessMpInRangeTest()
         {
             //Arrange
             var spellRepo = new Mock<ISpellRepo>();
@@ -82,15 +83,15 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.CreateSpell(spellDto);
 
             //Assert
-            Assert.Equal("Zoom", result.Name);
-            Assert.Equal("Test", result.Description);
-            Assert.Equal(0, result.MPCost);
-            Assert.Equal("Ally", result.SpellTarget);
+            Assert.Equal("Zoom", result.Data.Name);
+            Assert.Equal("Test", result.Data.Description);
+            Assert.Equal(0, result.Data.MPCost);
+            Assert.Equal("Ally", result.Data.SpellTarget);
             spellRepo.Verify(x => x.CreateSpell(It.IsAny<Spell>()), Times.Once);
             spellRepo.Verify(x => x.SaveChanges(), Times.Once);
-        } 
-                [Fact]
-         public void CreateSpellSuccessMpOutOfRangeTest()
+        }
+        [Fact]
+        public void CreateSpellSuccessMpOutOfRangeTest()
         {
             //Arrange
             var spellRepo = new Mock<ISpellRepo>();
@@ -112,8 +113,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.CreateSpell(spellDto);
 
             //Assert
-            Assert.Null(result.Name);
-        } 
+            Assert.Null(result.Data);
+        }
         [Fact]
         public void CreateSpellBlankNameTest()
         {
@@ -131,8 +132,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.CreateSpell(spellDto);
 
             //Assert
-            Assert.Null(result.Name);
-        } 
+            Assert.Null(result.Data);
+        }
         [Fact]
         public void CreateSpellNullTest()
         {
@@ -146,8 +147,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.CreateSpell(spellDto);
 
             //Assert
-            Assert.Null(result.Name);
-        } 
+            Assert.Null(result.Data);
+        }
 
         [Fact]
         public void DeleteSpellSuccessTest()
@@ -167,8 +168,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.DeleteSpell(1);
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Kafrizzle", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Kafrizzle", result.Data.Name);
         }
 
         [Fact]
@@ -176,9 +177,8 @@ namespace StarrySkies.Tests.Service.Tests
         {
             //Arrange
             var spellRepo = new Mock<ISpellRepo>();
-            Spell spellToDelete = new Spell();
 
-            spellRepo.Setup(x => x.GetSpell(1)).Returns(spellToDelete);
+            spellRepo.Setup(x => x.GetSpell(1));
 
             var spellService = new SpellService(spellRepo.Object, _mapper);
 
@@ -186,7 +186,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.DeleteSpell(1);
 
             //Assert
-            Assert.Null(result.Name);
+            Assert.Null(result.Data);
             spellRepo.Verify(x => x.DeleteSpell(It.IsAny<Spell>()), Times.Never);
         }
 
@@ -206,8 +206,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.GetSpell(1);
 
             //Arrange
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Kafrizzle", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Kafrizzle", result.Data.Name);
             spellRepo.Verify(x => x.GetSpell(It.IsAny<int>()), Times.Once);
         }
 
@@ -216,17 +216,15 @@ namespace StarrySkies.Tests.Service.Tests
         {
             //Arrange
             var spellRepo = new Mock<ISpellRepo>();
-            Spell spell = new Spell();
 
-            spellRepo.Setup(x => x.GetSpell(1)).Returns(spell);
+            spellRepo.Setup(x => x.GetSpell(1));
             var spellService = new SpellService(spellRepo.Object, _mapper);
 
             //Act
             var result = spellService.GetSpell(1);
 
             //Arrange
-            Assert.Equal(0, result.Id);
-            Assert.Null(result.Name);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -254,7 +252,7 @@ namespace StarrySkies.Tests.Service.Tests
             updatedSpell.Description = "Burn";
             updatedSpell.SpellTarget = "One Enemy";
 
-            spellRepo.Setup(x=>x.GetSpell(1)).Returns(spell);
+            spellRepo.Setup(x => x.GetSpell(1)).Returns(spell);
             spellRepo.Setup(x => x.UpdateSpell(updatedSpell));
             spellRepo.Setup(x => x.SaveChanges());
             var spellService = new SpellService(spellRepo.Object, _mapper);
@@ -263,11 +261,11 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.UpdateSpell(1, spellToUpdate);
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("KaFrizzle", result.Name);
-            Assert.Equal(6, result.MPCost);
-            Assert.Equal("Burn", result.Description);
-            Assert.Equal("One Enemy", result.SpellTarget);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("KaFrizzle", result.Data.Name);
+            Assert.Equal(6, result.Data.MPCost);
+            Assert.Equal("Burn", result.Data.Description);
+            Assert.Equal("One Enemy", result.Data.SpellTarget);
         }
 
         [Fact]
@@ -288,8 +286,7 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.UpdateSpell(1, updatedSpell);
 
             //Arrange
-            Assert.Equal(0, result.Id);
-            Assert.Null(result.Name);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -311,8 +308,8 @@ namespace StarrySkies.Tests.Service.Tests
             var result = spellService.UpdateSpell(1, updatedSpell);
 
             //Arrange
-            Assert.Equal(0, result.Id);
-            Assert.Null(result.Name);
+            Assert.Null(result.Data);
+            Assert.False(result.Success);
         }
 
         [Fact]
@@ -325,15 +322,14 @@ namespace StarrySkies.Tests.Service.Tests
             CreateSpellDto updatedSpell = new CreateSpellDto();
             updatedSpell.Name = "Zoom";
 
-            spellRepo.Setup(x => x.GetSpell(1)).Returns(spell);
+            spellRepo.Setup(x => x.GetSpell(1));
             var spellService = new SpellService(spellRepo.Object, _mapper);
 
             //Act
             var result = spellService.UpdateSpell(1, updatedSpell);
 
             //Arrange
-            Assert.Equal(0, result.Id);
-            Assert.Null(result.Name);
+            Assert.Null(result.Data);
         }
     }
 }

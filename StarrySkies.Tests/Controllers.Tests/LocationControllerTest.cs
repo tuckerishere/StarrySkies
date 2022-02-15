@@ -12,6 +12,7 @@ using StarrySkies.Services.Mapping;
 using StarrySkies.Services.Services.Locations;
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Tests.Controllers.Tests
 {
@@ -33,8 +34,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             ICollection<LocationResponseDto> locationList = new List<LocationResponseDto>();
             locationList.Add(location);
             locationList.Add(locationTwo);
+            var serviceResponse = new ServiceResponse<ICollection<LocationResponseDto>>();
+            serviceResponse.Data = locationList;
 
-            locationService.Setup(x => x.GetAllLocations()).Returns(locationList);
+            locationService.Setup(x => x.GetAllLocations()).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
@@ -42,9 +45,9 @@ namespace StarrySkies.Tests.Controllers.Tests
             var results = locationController.GetAllLocations();
 
             //Assert
-            var listResults = (results.Result as OkObjectResult).Value as List<LocationResponseDto>;
-            Assert.Equal(2, listResults.Count());
-            Assert.Equal("Spira", listResults[1].Name);
+            var listResults = (results.Result as OkObjectResult).Value as ServiceResponse<List<LocationResponseDto>>;
+            Assert.Equal(2, listResults.Data.Count());
+            Assert.Equal("Spira", listResults.Data[1].Name);
         }
 
         [Fact]
@@ -53,8 +56,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var locationService = new Mock<ILocationService>();
             ICollection<LocationResponseDto> locationList = new List<LocationResponseDto>();
+            var serviceResponse = new ServiceResponse<ICollection<LocationResponseDto>>();
+            serviceResponse.Data = locationList;
 
-            locationService.Setup(x => x.GetAllLocations()).Returns(locationList);
+            locationService.Setup(x => x.GetAllLocations()).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
@@ -62,8 +67,8 @@ namespace StarrySkies.Tests.Controllers.Tests
             var initalReults = locationController.GetAllLocations();
 
             //Assert
-            var results = (initalReults.Result as OkObjectResult).Value as List<LocationResponseDto>;
-            Assert.Empty(results);
+            var results = (initalReults.Result as OkObjectResult).Value as ServiceResponse<List<LocationResponseDto>>;
+            Assert.Empty(results.Data);
         }
 
         [Fact]
@@ -75,8 +80,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             location.Id = 1;
             location.Name = "Terra";
             location.Description = "Earth";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Data = location;
 
-            locationService.Setup(x => x.GetLocation(location.Id)).Returns(location);
+            locationService.Setup(x => x.GetLocation(location.Id)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
@@ -84,10 +91,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             var initialResult = locationController.GetLocation(1);
 
             //Assert
-            var result = (initialResult.Result as OkObjectResult).Value as LocationResponseDto;
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Terra", result.Name);
-            Assert.Equal("Earth", result.Description);
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<LocationResponseDto>;
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Terra", result.Data.Name);
+            Assert.Equal("Earth", result.Data.Description);
 
         }
         [Fact]
@@ -95,9 +102,10 @@ namespace StarrySkies.Tests.Controllers.Tests
         {
             //Arrange
             var locationService = new Mock<ILocationService>();
-            LocationResponseDto location = new LocationResponseDto();
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Success = false;
 
-            locationService.Setup(x => x.GetLocation(1)).Returns(location);
+            locationService.Setup(x => x.GetLocation(1)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
@@ -105,7 +113,7 @@ namespace StarrySkies.Tests.Controllers.Tests
             var initialResults = locationController.GetLocation(1);
 
             //Assert
-            var result = (initialResults.Result as NotFoundResult).StatusCode;
+            var result = (initialResults.Result as NotFoundObjectResult).StatusCode;
             Assert.Equal(404, result);
         }
 
@@ -121,19 +129,21 @@ namespace StarrySkies.Tests.Controllers.Tests
             CreateLocationDto createdLocation = new CreateLocationDto();
             createdLocation.Name = "Test";
             createdLocation.Description = "Testing";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Data = locationResponse;
 
-            locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(locationResponse);
+            locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResult = locationController.CreateLocation(createdLocation);
 
-            var result = (initialResult.Result as CreatedAtActionResult).Value as LocationResponseDto;
+            var result = (initialResult.Result as CreatedAtActionResult).Value as ServiceResponse<LocationResponseDto>;
 
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Test", result.Name);
-            Assert.Equal("Testing", result.Description);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Test", result.Data.Name);
+            Assert.Equal("Testing", result.Data.Description);
         }
 
         [Fact]
@@ -148,8 +158,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             CreateLocationDto createdLocation = new CreateLocationDto();
             createdLocation.Name = "Test";
             createdLocation.Description = "Testing";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Data = locationResponse;
 
-            locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(locationResponse);
+            locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
@@ -171,8 +183,11 @@ namespace StarrySkies.Tests.Controllers.Tests
             locationResponse.Description = "Testing";
             CreateLocationDto createdLocation = new CreateLocationDto();
             createdLocation.Description = "Testing";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Data = locationResponse;
+            serviceResponse.Success = false;
 
-            locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(locationResponse);
+            locationService.Setup(x => x.CreateLocation(createdLocation)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
@@ -193,20 +208,22 @@ namespace StarrySkies.Tests.Controllers.Tests
             location.Id = 1;
             location.Name = "Leena";
             location.Description = "Goodbye";
+            ServiceResponse<LocationResponseDto> serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Data = location;
 
-            locationService.Setup(x => x.DeleteLocation(location.Id)).Returns(location);
+            locationService.Setup(x => x.DeleteLocation(location.Id)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResult = locationController.DeleteLocation(location.Id);
 
-            var result = (initialResult.Result as OkObjectResult).Value as LocationResponseDto;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<LocationResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Leena", result.Name);
-            Assert.Equal("Goodbye", result.Description);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Leena", result.Data.Name);
+            Assert.Equal("Goodbye", result.Data.Description);
         }
         [Fact]
         public void SuccessfulDeleteLocationStatusCodeTest()
@@ -217,8 +234,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             location.Id = 1;
             location.Name = "Leena";
             location.Description = "Goodbye";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Data = location;
 
-            locationService.Setup(x => x.DeleteLocation(location.Id)).Returns(location);
+            locationService.Setup(x => x.DeleteLocation(location.Id)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
@@ -236,14 +255,16 @@ namespace StarrySkies.Tests.Controllers.Tests
         {
             //Arrange
             var locationService = new Mock<ILocationService>();
-            locationService.Setup(x => x.DeleteLocation(1)).Returns(new LocationResponseDto());
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Success = false;
+            locationService.Setup(x => x.DeleteLocation(1)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.DeleteLocation(1);
 
-            var result = (initialResults.Result as NotFoundResult).StatusCode;
+            var result = (initialResults.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -265,19 +286,21 @@ namespace StarrySkies.Tests.Controllers.Tests
             updatedResponse.Id = 1;
             updatedResponse.Name = "Terra";
             updatedResponse.Description = "Earth";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Data = updatedResponse;
 
-            locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(updatedResponse);
+            locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.UpdateLocation(1, updatedLocation);
-            var results = (initialResults.Result as OkObjectResult).Value as LocationResponseDto;
+            var results = (initialResults.Result as OkObjectResult).Value as ServiceResponse<LocationResponseDto>;
 
             //Assert
-            Assert.Equal(1, results.Id);
-            Assert.Equal("Terra", results.Name);
-            Assert.Equal("Earth", results.Description);
+            Assert.Equal(1, results.Data.Id);
+            Assert.Equal("Terra", results.Data.Name);
+            Assert.Equal("Earth", results.Data.Description);
         }
 
         [Fact]
@@ -288,15 +311,17 @@ namespace StarrySkies.Tests.Controllers.Tests
             CreateLocationDto updatedLocation = new CreateLocationDto();
             updatedLocation.Name = "Updated";
             updatedLocation.Description = "oops";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Success = false;
 
-            locationService.Setup(x => x.UpdateLocation(1, updatedLocation)).Returns(new LocationResponseDto());
+            locationService.Setup(x => x.UpdateLocation(1, updatedLocation)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
             //Act
             var initialResults = locationController.UpdateLocation(1, updatedLocation);
 
-            var results = (initialResults.Result as NotFoundResult).StatusCode;
+            var results = (initialResults.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, results);
@@ -317,8 +342,9 @@ namespace StarrySkies.Tests.Controllers.Tests
             updatedResponse.Id = 1;
             updatedResponse.Name = "Spira";
             updatedResponse.Description = "Spiral";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
 
-            locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(updatedResponse);
+            locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 
@@ -346,8 +372,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             updatedResponse.Id = 1;
             updatedResponse.Name = "Spira";
             updatedResponse.Description = "Spiral";
+            var serviceResponse = new ServiceResponse<LocationResponseDto>();
+            serviceResponse.Data = updatedResponse;
 
-            locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(updatedResponse);
+            locationService.Setup(x => x.UpdateLocation(location.Id, updatedLocation)).Returns(serviceResponse);
 
             var locationController = new LocationController(locationService.Object);
 

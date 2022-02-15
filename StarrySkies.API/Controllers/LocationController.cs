@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using StarrySkies.Data.Models;
 using StarrySkies.Services.DTOs;
+using StarrySkies.Services.ResponseModels;
 using StarrySkies.Services.Services.Locations;
 
 namespace StarrySkies.API.Controllers
@@ -22,22 +23,23 @@ namespace StarrySkies.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<List<LocationResponseDto>>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<List<LocationResponseDto>> GetAllLocations()
+        public ActionResult<ServiceResponse<List<LocationResponseDto>>> GetAllLocations()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            List<LocationResponseDto> allLocations = _locationService.GetAllLocations().ToList();
+            ServiceResponse<List<LocationResponseDto>> allLocations = new ServiceResponse<List<LocationResponseDto>>();
+            allLocations.Data = _locationService.GetAllLocations().Data.ToList();
 
             return Ok(allLocations);
         }
 
         [HttpGet("{id}", Name = "GetLocation")]
-        [ProducesResponseType(200, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<LocationResponseDto>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public ActionResult<LocationResponseDto> GetLocation(int id)
@@ -47,47 +49,47 @@ namespace StarrySkies.API.Controllers
                 return BadRequest();
             }
 
-            LocationResponseDto location = _locationService.GetLocation(id);
+            ServiceResponse<LocationResponseDto> location = _locationService.GetLocation(id);
 
-            if (location.Id == 0 || location == null)
+            if (!location.Success)
             {
-                return NotFound();
+                return NotFound(location);
             }
 
             return Ok(location);
         }
 
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(201, Type = typeof(ServiceResponse<LocationResponseDto>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<LocationResponseDto> CreateLocation([FromBody] CreateLocationDto location)
+        public ActionResult<ServiceResponse<LocationResponseDto>> CreateLocation([FromBody] CreateLocationDto location)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            LocationResponseDto createdLocation = _locationService.CreateLocation(location);
+            ServiceResponse<LocationResponseDto> createdLocation = _locationService.CreateLocation(location);
 
-            if (createdLocation.Name == null)
+            if (!createdLocation.Success)
             {
-                return BadRequest("Please enter name.");
+                return BadRequest(createdLocation);
             }
 
-            return CreatedAtAction(nameof(GetLocation), new { id = createdLocation.Id }, createdLocation);
+            return CreatedAtAction(nameof(GetLocation), new { id = createdLocation.Data.Id }, createdLocation);
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(200, Type = typeof(LocationResponseDto))]
+        [ProducesResponseType(200, Type = typeof(ServiceResponse<LocationResponseDto>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<LocationResponseDto> DeleteLocation(int id)
+        public ActionResult<ServiceResponse<LocationResponseDto>> DeleteLocation(int id)
         {
-            LocationResponseDto locationToDelete = _locationService.DeleteLocation(id);
-            if (locationToDelete == null || locationToDelete.Id == 0)
+            ServiceResponse<LocationResponseDto> locationToDelete = _locationService.DeleteLocation(id);
+            if (!locationToDelete.Success)
             {
-                return NotFound();
+                return NotFound(locationToDelete);
             }
 
             return Ok(locationToDelete);
@@ -97,7 +99,7 @@ namespace StarrySkies.API.Controllers
         [ProducesResponseType(200, Type = typeof(LocationResponseDto))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<LocationResponseDto> UpdateLocation(int id, [FromBody] CreateLocationDto locationToUpdate)
+        public ActionResult<ServiceResponse<LocationResponseDto>> UpdateLocation(int id, [FromBody] CreateLocationDto locationToUpdate)
         {
 
             if (locationToUpdate.Name == null || locationToUpdate.Name.Trim() == "")
@@ -105,13 +107,13 @@ namespace StarrySkies.API.Controllers
                 return BadRequest("Please enter name.");
             }
 
-            LocationResponseDto updatedLocation = new LocationResponseDto();
+            ServiceResponse<LocationResponseDto> updatedLocation = new ServiceResponse<LocationResponseDto>();
 
             updatedLocation = _locationService.UpdateLocation(id, locationToUpdate);
 
-            if (updatedLocation.Id == 0)
+            if (!updatedLocation.Success)
             {
-                return NotFound();
+                return NotFound(updatedLocation);
             }
 
             return Ok(updatedLocation);

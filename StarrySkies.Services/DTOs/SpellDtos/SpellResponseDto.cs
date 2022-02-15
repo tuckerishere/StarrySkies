@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using StarrySkies.Services.DTOs.VocationDtos;
+
 namespace StarrySkies.Services.DTOs.SpellDtos
 {
     public class SpellResponseDto
@@ -7,6 +10,7 @@ namespace StarrySkies.Services.DTOs.SpellDtos
         public string Description { get; set; }
         public int MPCost { get; set; }
         public string SpellTarget { get; set; }
-    }
+        public List<GetVocation> Vocations {get; set;}
+}
     
 }

@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using StarrySkies.Services.DTOs.SpellDtos;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Services.Services.Spells
 {
     public interface ISpellService
     {
-        ICollection<SpellResponseDto> GetAllSpells();
-        SpellResponseDto GetSpell(int id);
-        SpellResponseDto CreateSpell(CreateSpellDto createSpell);
-        SpellResponseDto DeleteSpell(int id);
-        SpellResponseDto UpdateSpell(int id, CreateSpellDto updateSpell);
+        ServiceResponse<ICollection<SpellResponseDto>> GetAllSpells();
+        ServiceResponse<SpellResponseDto> GetSpell(int id);
+        ServiceResponse<SpellResponseDto> CreateSpell(CreateSpellDto createSpell);
+        ServiceResponse<SpellResponseDto> DeleteSpell(int id);
+        ServiceResponse<SpellResponseDto> UpdateSpell(int id, CreateSpellDto updateSpell);
 
     }
 }

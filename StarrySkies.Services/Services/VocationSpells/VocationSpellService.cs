@@ -5,6 +5,7 @@ using StarrySkies.Data.Repositories.SpellRepo;
 using StarrySkies.Data.Repositories.VocationRepo;
 using StarrySkies.Data.Repositories.VocationSpellRepo;
 using StarrySkies.Services.DTOs.VocationSpellDtos;
+using StarrySkies.Services.ResponseModels;
 
 namespace StarrySkies.Services.Services.VocationSpells
 {
@@ -14,7 +15,7 @@ namespace StarrySkies.Services.Services.VocationSpells
         private readonly IVocationRepo _vocationRepo;
         private readonly ISpellRepo _spellRepo;
         private readonly IMapper _mapper;
-        public VocationSpellService(IVocationSpellRepo vocationSpellRepo, 
+        public VocationSpellService(IVocationSpellRepo vocationSpellRepo,
             IVocationRepo vocationRepo,
             ISpellRepo spellRepo,
             IMapper mapper)
@@ -25,68 +26,88 @@ namespace StarrySkies.Services.Services.VocationSpells
             _mapper = mapper;
         }
 
-        public VocationSpellResponseDto GetVocationSpell(int vocationId, int spellId)
+        public ServiceResponse<VocationSpellResponseDto> GetVocationSpell(int vocationId, int spellId)
         {
-            VocationSpellResponseDto vocationSpellReturn = new VocationSpellResponseDto();
+            ServiceResponse<VocationSpellResponseDto> vocationSpellReturn = new ServiceResponse<VocationSpellResponseDto>();
             VocationSpell vocationSpell = _vocationSpellRepo.GetVocationSpell(vocationId, spellId);
 
-            if(vocationSpell != null && vocationSpell?.VocationId != 0 && vocationSpell?.SpellId != 0)
+            if (vocationSpell != null)
             {
-                vocationSpellReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+                vocationSpellReturn.Data = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+            }
+            else
+            {
+                vocationSpellReturn.Success = false;
+                vocationSpellReturn.Message = "VocationSpell not found.";
             }
 
             return vocationSpellReturn;
         }
 
-        public ICollection<VocationSpellResponseDto> GetVocationSpells()
+        public ServiceResponse<ICollection<VocationSpellResponseDto>> GetVocationSpells()
         {
-            ICollection<VocationSpell> vocationSpells = _vocationSpellRepo.GetVocationSpells();
-            return _mapper.Map<ICollection<VocationSpell>, ICollection<VocationSpellResponseDto>>(vocationSpells); 
+            ServiceResponse<ICollection<VocationSpellResponseDto>> vsToReturn = new ServiceResponse<ICollection<VocationSpellResponseDto>>();
+            var vocationSpells = _vocationSpellRepo.GetVocationSpells();
+            vsToReturn.Data = _mapper.Map<ICollection<VocationSpell>, ICollection<VocationSpellResponseDto>>(vocationSpells);
+
+            return vsToReturn;
         }
 
-        public VocationSpellResponseDto CreateVocationSpell(VocationSpellResponseDto createSpell)
+        public ServiceResponse<VocationSpellResponseDto> CreateVocationSpell(VocationSpellResponseDto createSpell)
         {
-            VocationSpellResponseDto vsToReturn = new VocationSpellResponseDto();
+            ServiceResponse<VocationSpellResponseDto> vsToReturn = new ServiceResponse<VocationSpellResponseDto>();
             VocationSpell vocationSpell = VocationSpellSetValue(createSpell);
             bool vocationSpellExists = VocationSpellExists(createSpell);
 
-            if(vocationSpell?.VocationId != 0  && vocationSpell?.SpellId != 0 && !vocationSpellExists)
+            if (vocationSpell?.VocationId != 0 && vocationSpell?.SpellId != 0 && !vocationSpellExists)
             {
                 _vocationSpellRepo.CreateVocationSpell(vocationSpell);
                 _vocationSpellRepo.SaveChanges();
-                vsToReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+                vsToReturn.Data = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+            }
+            else
+            {
+                vsToReturn.Success = false;
+                vsToReturn.Message = "Unable to add VocationSpell.";
             }
 
             return vsToReturn;
         }
 
-        public VocationSpellResponseDto UpdateVocationSpell(int vocationId, int spellId, 
+        public ServiceResponse<VocationSpellResponseDto> UpdateVocationSpell(int vocationId, int spellId,
             VocationSpellResponseDto updatedVocationSpell)
         {
-            var vsToReturn = new VocationSpellResponseDto();
+            var vsToReturn = new ServiceResponse<VocationSpellResponseDto>();
             var vocationSpellToUpdate = GetVocationByIds(vocationId, spellId);
-            if(vocationSpellToUpdate.SpellId != 0 && vocationSpellToUpdate.VocationId != 0
-                && !VocationSpellExists(updatedVocationSpell))
+            if (vocationSpellToUpdate != null
+            && vocationSpellToUpdate.SpellId != 0
+            && vocationSpellToUpdate.VocationId != 0
+            && !VocationSpellExists(updatedVocationSpell))
             {
-                    var vocationSpell = VocationSpellSetValue(updatedVocationSpell);
-                    _vocationSpellRepo.UpdateVocationSpell(vocationSpell);
-                    _vocationSpellRepo.SaveChanges();
-                    vsToReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+                var vocationSpell = VocationSpellSetValue(updatedVocationSpell);
+                _vocationSpellRepo.UpdateVocationSpell(vocationSpell);
+                _vocationSpellRepo.SaveChanges();
+                vsToReturn.Data = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+            }
+            else
+            {
+                vsToReturn.Success = false;
+                vsToReturn.Message = "Unable to update Vocation Spell.";
             }
 
             return vsToReturn;
         }
 
-        public VocationSpellResponseDto DeleteVocationSpell(int vocationId, int spellId)
+        public ServiceResponse<VocationSpellResponseDto> DeleteVocationSpell(int vocationId, int spellId)
         {
-            VocationSpellResponseDto vsToReturn = new VocationSpellResponseDto();
+            ServiceResponse<VocationSpellResponseDto> vsToReturn = new ServiceResponse<VocationSpellResponseDto>();
             var deleteSpell = GetVocationByIds(vocationId, spellId);
-            if(VocationSpellExists(deleteSpell))
+            if (VocationSpellExists(deleteSpell))
             {
                 VocationSpell vocationSpell = _mapper.Map<VocationSpellResponseDto, VocationSpell>(deleteSpell);
                 _vocationSpellRepo.DeleteVocationSpell(vocationSpell);
                 _vocationSpellRepo.SaveChanges();
-                vsToReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
+                vsToReturn.Data = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
             }
 
             return vsToReturn;
@@ -98,7 +119,7 @@ namespace StarrySkies.Services.Services.VocationSpells
             Vocation vocation = _vocationRepo.GetVocationById(createSpell.VocationId);
             Spell spell = _spellRepo.GetSpell(createSpell.SpellId);
 
-            if(vocation != null && spell != null)
+            if (vocation != null && spell != null)
             {
                 vocationSpell = _mapper.Map<VocationSpellResponseDto, VocationSpell>(createSpell);
                 vocationSpell.Spell = spell;
@@ -113,21 +134,21 @@ namespace StarrySkies.Services.Services.VocationSpells
             bool vocationSpellExists = false;
 
             VocationSpell vocationSpell = _vocationSpellRepo.GetVocationSpell(createSpell.VocationId, createSpell.SpellId);
-            
-            if(vocationSpell != null)
+
+            if (vocationSpell != null)
             {
                 vocationSpellExists = true;
             }
 
             return vocationSpellExists;
-        }   
+        }
 
         private VocationSpellResponseDto GetVocationByIds(int vocationId, int spellId)
         {
             VocationSpellResponseDto vocationSpellReturn = new VocationSpellResponseDto();
             VocationSpell vocationSpell = _vocationSpellRepo.GetVocationSpell(vocationId, spellId);
 
-            if(vocationSpell != null)
+            if (vocationSpell != null)
             {
                 vocationSpellReturn = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
             }

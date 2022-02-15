@@ -1,9 +1,11 @@
+using System.ComponentModel.Design;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using StarrySkies.API.Controllers;
 using StarrySkies.Services.DTOs.VocationDtos;
+using StarrySkies.Services.ResponseModels;
 using StarrySkies.Services.Services.Vocations;
 using Xunit;
 
@@ -25,16 +27,18 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationList = new List<VocationResponseDto>();
             vocationList.Add(vocationOne);
             vocationList.Add(vocationTwo);
+            var serviceResponse = new ServiceResponse<ICollection<VocationResponseDto>>();
+            serviceResponse.Data = vocationList;
 
-            vocationService.Setup(x => x.GetVocations()).Returns(vocationList);
+            vocationService.Setup(x => x.GetVocations()).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initialResult = vocationController.GetAllVocations();
-            var result = (initialResult.Result as OkObjectResult).Value as List<VocationResponseDto>;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<ICollection<VocationResponseDto>>;
 
             //Assert
-            Assert.Equal(2, result.Count);
+            Assert.Equal(2, result.Data.Count);
         }
 
         [Fact]
@@ -43,16 +47,17 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var vocationService = new Mock<IVocationService>();
             var vocationList = new List<VocationResponseDto>();
+            var serviceResponse = new ServiceResponse<ICollection<VocationResponseDto>>();
 
-            vocationService.Setup(x => x.GetVocations()).Returns(vocationList);
+            vocationService.Setup(x => x.GetVocations()).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initalResult = vocationController.GetAllVocations();
-            var result = (initalResult.Result as OkObjectResult).Value as List<VocationResponseDto>;
+            var result = (initalResult.Result as OkObjectResult).Value as ServiceResponse<ICollection<VocationResponseDto>>;
 
             //Assert
-            Assert.Empty(result);
+            Assert.Null(result.Data);
         }
 
         [Fact]
@@ -61,8 +66,9 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var vocationService = new Mock<IVocationService>();
             var vocationList = new List<VocationResponseDto>();
+            var serviceResponse = new ServiceResponse<ICollection<VocationResponseDto>>();
 
-            vocationService.Setup(x => x.GetVocations()).Returns(vocationList);
+            vocationService.Setup(x => x.GetVocations()).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
@@ -81,17 +87,19 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocation = new VocationResponseDto();
             vocation.Id = 1;
             vocation.Name = "Thief";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Data = vocation;
 
-            vocationService.Setup(x => x.GetVocationById(1)).Returns(vocation);
+            vocationService.Setup(x => x.GetVocationById(1)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initialResult = vocationController.GetVocation(1);
-            var result = (initialResult.Result as OkObjectResult).Value as VocationResponseDto;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<VocationResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Thief", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Thief", result.Data.Name);
         }
 
         [Fact]
@@ -102,8 +110,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocation = new VocationResponseDto();
             vocation.Id = 1;
             vocation.Name = "Sage";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Data = vocation;
 
-            vocationService.Setup(x => x.GetVocationById(1)).Returns(vocation);
+            vocationService.Setup(x => x.GetVocationById(1)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
@@ -120,13 +130,15 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var vocationService = new Mock<IVocationService>();
             var vocation = new VocationResponseDto();
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationService.Setup(x => x.GetVocationById(1)).Returns(vocation);
+            vocationService.Setup(x => x.GetVocationById(1)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initialResult = vocationController.GetVocation(1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
             //Assert
             Assert.Equal(404, result);
         }
@@ -141,17 +153,19 @@ namespace StarrySkies.Tests.Controllers.Tests
             VocationResponseDto vocationToReturn = new VocationResponseDto();
             vocationToReturn.Id = 1;
             vocationToReturn.Name = "Mage";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Data = vocationToReturn;
 
-            vocationService.Setup(x => x.CreateVocation(vocationToCreate)).Returns(vocationToReturn);
+            vocationService.Setup(x => x.CreateVocation(vocationToCreate)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initialResult = vocationController.CreateVocation(vocationToCreate);
-            var result = (initialResult.Result as CreatedAtActionResult).Value as VocationResponseDto;
+            var result = (initialResult.Result as CreatedAtActionResult).Value as ServiceResponse<VocationResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Mage", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Mage", result.Data.Name);
         }
 
         [Fact]
@@ -164,8 +178,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationToReturn = new VocationResponseDto();
             vocationToReturn.Id = 1;
             vocationToReturn.Name = "Thief";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Data = vocationToReturn;
 
-            vocationService.Setup(x => x.CreateVocation(vocationToCreate)).Returns(vocationToReturn);
+            vocationService.Setup(x => x.CreateVocation(vocationToCreate)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
@@ -182,7 +198,9 @@ namespace StarrySkies.Tests.Controllers.Tests
             //Arrange
             var vocationService = new Mock<IVocationService>();
             var vocationToReturn = new VocationResponseDto();
-            vocationService.Setup(x => x.CreateVocation(null));
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Success = false;
+            vocationService.Setup(x => x.CreateVocation(null)).Returns(serviceResponse);
 
             var vocationController = new VocationController(vocationService.Object);
 
@@ -202,6 +220,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationToCreate = new CreateVocationDto();
             vocationToCreate.Name = "";
             var vocationToReturn = new VocationResponseDto();
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Success = false;
+
+            vocationService.Setup(x => x.CreateVocation(vocationToCreate)).Returns(serviceResponse);
 
             var vocationController = new VocationController(vocationService.Object);
 
@@ -221,17 +243,19 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationToDelete = new VocationResponseDto();
             vocationToDelete.Id = 1;
             vocationToDelete.Name = "Sage";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Data = vocationToDelete;
 
-            vocationService.Setup(x => x.DeleteVocation(1)).Returns(vocationToDelete);
+            vocationService.Setup(x => x.DeleteVocation(1)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initalResult = vocationController.DeleteVocation(1);
-            var result = (initalResult.Result as OkObjectResult).Value as VocationResponseDto;
+            var result = (initalResult.Result as OkObjectResult).Value as ServiceResponse<VocationResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Sage", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Sage", result.Data.Name);
         }
 
         [Fact]
@@ -242,8 +266,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationToDelete = new VocationResponseDto();
             vocationToDelete.Id = 1;
             vocationToDelete.Name = "Mage";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Data = vocationToDelete;
 
-            vocationService.Setup(x => x.DeleteVocation(1)).Returns(vocationToDelete);
+            vocationService.Setup(x => x.DeleteVocation(1)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
@@ -259,13 +285,15 @@ namespace StarrySkies.Tests.Controllers.Tests
         {
             //Arrange
             var vocationService = new Mock<IVocationService>();
-            vocationService.Setup(x => x.DeleteVocation(1));
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Success = false;
+            vocationService.Setup(x => x.DeleteVocation(1)).Returns(serviceResponse);
 
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initialResult = vocationController.DeleteVocation(1);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as NotFoundObjectResult).StatusCode;
 
             //Assert
             Assert.Equal(404, result);
@@ -281,17 +309,19 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationToUpdate = new VocationResponseDto();
             vocationToUpdate.Id = 1;
             vocationToUpdate.Name = "Thief";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Data = vocationToUpdate;
 
-            vocationService.Setup(x => x.UpdateVocation(1, updatedVocation)).Returns(vocationToUpdate);
+            vocationService.Setup(x => x.UpdateVocation(1, updatedVocation)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initialResult = vocationController.UpdateVocation(1, updatedVocation);
-            var result = (initialResult.Result as OkObjectResult).Value as VocationResponseDto;
+            var result = (initialResult.Result as OkObjectResult).Value as ServiceResponse<VocationResponseDto>;
 
             //Assert
-            Assert.Equal(1, result.Id);
-            Assert.Equal("Thief", result.Name);
+            Assert.Equal(1, result.Data.Id);
+            Assert.Equal("Thief", result.Data.Name);
         }
 
         [Fact]
@@ -304,8 +334,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationToUpdate = new VocationResponseDto();
             vocationToUpdate.Id = 1;
             vocationToUpdate.Name = "Mage";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Data = vocationToUpdate;
 
-            vocationService.Setup(x => x.UpdateVocation(1, updateVocation)).Returns(vocationToUpdate);
+            vocationService.Setup(x => x.UpdateVocation(1, updateVocation)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
@@ -323,16 +355,18 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationService = new Mock<IVocationService>();
             var updatedVocation = new CreateVocationDto();
             updatedVocation.Name = "Thief";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationService.Setup(x => x.UpdateVocation(1, updatedVocation));
+            vocationService.Setup(x => x.UpdateVocation(1, updatedVocation)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
             var initialResult = vocationController.UpdateVocation(1, updatedVocation);
-            var result = (initialResult.Result as NotFoundResult).StatusCode;
+            var result = (initialResult.Result as BadRequestObjectResult).StatusCode;
 
             //Assert
-            Assert.Equal(404, result);
+            Assert.Equal(400, result);
         }
 
         [Fact]
@@ -345,8 +379,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationToUpdate = new VocationResponseDto();
             vocationToUpdate.Id = 1;
             vocationToUpdate.Name = "Thief";
+            var serviceResponse = new ServiceResponse<VocationResponseDto>();
+            serviceResponse.Success = false;
 
-            vocationService.Setup(x => x.UpdateVocation(1, updatedVocation)).Returns(vocationToUpdate);
+            vocationService.Setup(x => x.UpdateVocation(1, updatedVocation)).Returns(serviceResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
@@ -365,8 +401,10 @@ namespace StarrySkies.Tests.Controllers.Tests
             var vocationToUpdate = new VocationResponseDto();
             vocationToUpdate.Id = 1;
             vocationToUpdate.Name = "Thief";
+            var serverResponse = new ServiceResponse<VocationResponseDto>();
+            serverResponse.Success = false;
 
-            vocationService.Setup(x => x.UpdateVocation(1, null)).Returns(vocationToUpdate);
+            vocationService.Setup(x => x.UpdateVocation(1, null)).Returns(serverResponse);
             var vocationController = new VocationController(vocationService.Object);
 
             //Act
