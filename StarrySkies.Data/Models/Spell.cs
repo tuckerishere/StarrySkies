@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 namespace StarrySkies.Data.Models
 {
     public class Spell
@@ -11,5 +13,8 @@ namespace StarrySkies.Data.Models
         public string Description { get; set; }
         public int MpCost { get; set; }
         public string SpellTarget { get; set; }  
+        public List<VocationSpell> VocationsSpells { get; set; }
+        
+        
     }
 }

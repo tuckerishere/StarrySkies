@@ -18,9 +18,10 @@ namespace StarrySkies.Services.Mapping
         {
             CreateMap<Location, LocationResponseDto>();
             CreateMap<WeaponCategory, WeaponCategoryResponseDto>();
-            CreateMap<Vocation, VocationResponseDto>();
-            CreateMap<Spell, SpellResponseDto>();
+            CreateMap<Vocation, VocationResponseDto>().ForMember(dto=>dto.Spells, v=>v.MapFrom(v=>v.VocationSpells.Select(s=>s.Spell)));
+            CreateMap<Spell, SpellResponseDto>().ForMember(dto=>dto.Vocations, vs=>vs.MapFrom(vs =>vs.VocationsSpells.Select(v=>v.Vocation)));
             CreateMap<VocationSpell, VocationSpellResponseDto>();
+            CreateMap<Vocation, GetVocation>();
         }
     }
 }

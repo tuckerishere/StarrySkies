@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace StarrySkies.Data.Models
@@ -8,8 +9,7 @@ namespace StarrySkies.Data.Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        
-        
+        public List<VocationSpell> VocationSpells { get; set; }
         
         
     }

@@ -65,6 +65,11 @@ namespace StarrySkies.Services.Services.VocationSpells
                 _vocationSpellRepo.SaveChanges();
                 vsToReturn.Data = _mapper.Map<VocationSpell, VocationSpellResponseDto>(vocationSpell);
             }
+            else
+            {
+                vsToReturn.Success = false;
+                vsToReturn.Message = "Unable to add VocationSpell.";
+            }
 
             return vsToReturn;
         }
